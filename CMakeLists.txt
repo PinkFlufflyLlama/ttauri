@@ -249,16 +249,16 @@ add_custom_command(
 target_sources(ttauri PRIVATE ${UNICODE_DATA_INL})
 
 add_shader(ttauri_binary_resources
-    src/TTauri/GUI/pipeline_image.vert
-    src/TTauri/GUI/pipeline_image.frag
-    src/TTauri/GUI/pipeline_flat.vert
-    src/TTauri/GUI/pipeline_flat.frag
-    src/TTauri/GUI/pipeline_box.vert
-    src/TTauri/GUI/pipeline_box.frag
-    src/TTauri/GUI/pipeline_SDF.vert
-    src/TTauri/GUI/pipeline_SDF.frag
-    src/TTauri/GUI/pipeline_tone_mapper.vert
-    src/TTauri/GUI/pipeline_tone_mapper.frag
+    src/ttauri/GUI/pipeline_image.vert
+    src/ttauri/GUI/pipeline_image.frag
+    src/ttauri/GUI/pipeline_flat.vert
+    src/ttauri/GUI/pipeline_flat.frag
+    src/ttauri/GUI/pipeline_box.vert
+    src/ttauri/GUI/pipeline_box.frag
+    src/ttauri/GUI/pipeline_SDF.vert
+    src/ttauri/GUI/pipeline_SDF.frag
+    src/ttauri/GUI/pipeline_tone_mapper.vert
+    src/ttauri/GUI/pipeline_tone_mapper.frag
 )
 set(ttauri_binary_resources ${ttauri_binary_resources}
     data/elusiveicons-webfont.ttf
