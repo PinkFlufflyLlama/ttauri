@@ -390,6 +390,12 @@ DependInfo.cmake
 CTestTestfile.cmake
 dateTargets.cmake
 CMakeDirectoryInformation.cmake
+depend.internal
+BinaryToCPP
+BinaryToCPP.c.o
+data/ttauri_icons.ttf.inl
+data/elusiveicons-webfont.ttf.inl
+tools/CMakeFiles/BinaryToCPP.dir/C.includecache
 
 # External and google test auto generated files
 external/date/dateConfigVersion.cmake
