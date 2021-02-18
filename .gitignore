@@ -396,6 +396,7 @@ BinaryToCPP.c.o
 data/ttauri_icons.ttf.inl
 data/elusiveicons-webfont.ttf.inl
 tools/CMakeFiles/BinaryToCPP.dir/C.includecache
+CMakeFiles/
 
 # External and google test auto generated files
 external/date/dateConfigVersion.cmake
@@ -405,3 +406,27 @@ external/googletest/googletest/generated/gtest_main.pc
 external/googletest/googletest/generated/gtest.pc
 external/googletest/googletest/generated/GTestConfig.cmake
 external/googletest/googletest/generated/GTestConfigVersion.cmake
+
+
+src/ttauri/GUI/pipeline_box.frag.spv
+.gitignore
+src/ttauri/GUI/pipeline_box.frag.spv.inl
+src/ttauri/GUI/pipeline_box.vert.spv
+src/ttauri/GUI/pipeline_box.vert.spv.inl
+src/ttauri/GUI/pipeline_flat.frag.spv
+src/ttauri/GUI/pipeline_flat.frag.spv.inl
+src/ttauri/GUI/pipeline_flat.vert.spv
+src/ttauri/GUI/pipeline_flat.vert.spv.inl
+src/ttauri/GUI/pipeline_image.frag.spv
+src/ttauri/GUI/pipeline_image.frag.spv.inl
+src/ttauri/GUI/pipeline_image.vert.spv
+src/ttauri/GUI/pipeline_image.vert.spv.inl
+src/ttauri/GUI/pipeline_SDF.frag.spv
+src/ttauri/GUI/pipeline_SDF.frag.spv.inl
+src/ttauri/GUI/pipeline_SDF.vert.spv
+src/ttauri/GUI/pipeline_SDF.vert.spv.inl
+src/ttauri/GUI/pipeline_tone_mapper.frag.spv
+src/ttauri/GUI/pipeline_tone_mapper.frag.spv.inl
+src/ttauri/GUI/pipeline_tone_mapper.vert.spv
+src/ttauri/GUI/pipeline_tone_mapper.vert.spv.inl
+src/ttauri/text/unicode_db.inl
