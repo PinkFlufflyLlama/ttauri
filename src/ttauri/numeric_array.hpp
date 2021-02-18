@@ -14,6 +14,7 @@
 #endif
 
 #include <cstdint>
+#include <climits>
 #include <ostream>
 #include <string>
 #include <array>
@@ -873,7 +874,7 @@ public:
     }
 
     [[nodiscard]] friend constexpr unsigned int eq(numeric_array const &lhs, numeric_array const &rhs) noexcept
-        requires(N <= sizeof(unsigned int) * CHAR_BIT)
+        requires (N <= sizeof(unsigned int) * CHAR_BIT)
     {
         if (is_f32x4 && has_sse && !std::is_constant_evaluated()) {
             return f32x4_sse_eq_mask(lhs.v, rhs.v);
@@ -887,7 +888,7 @@ public:
     }
 
     [[nodiscard]] friend constexpr unsigned int ne(numeric_array const &lhs, numeric_array const &rhs) noexcept
-        requires(N <= sizeof(unsigned int) * CHAR_BIT)
+        requires (N <= sizeof(unsigned int) * CHAR_BIT)
     {
         if (is_f32x4 && has_sse && !std::is_constant_evaluated()) {
             return f32x4_sse_ne_mask(lhs.v, rhs.v);
@@ -901,7 +902,7 @@ public:
     }
 
     [[nodiscard]] friend constexpr unsigned int lt(numeric_array const &lhs, numeric_array const &rhs) noexcept
-        requires(N <= sizeof(unsigned int) * CHAR_BIT)
+        requires (N <= sizeof(unsigned int) * CHAR_BIT)
     {
         if (is_f32x4 && has_sse && !std::is_constant_evaluated()) {
             return f32x4_sse_lt_mask(lhs.v, rhs.v);
@@ -915,7 +916,7 @@ public:
     }
 
     [[nodiscard]] friend constexpr unsigned int gt(numeric_array const &lhs, numeric_array const &rhs) noexcept
-        requires(N <= sizeof(unsigned int) * CHAR_BIT)
+        requires (N <= sizeof(unsigned int) * CHAR_BIT)
     {
         if (is_f32x4 && has_sse && !std::is_constant_evaluated()) {
             return f32x4_sse_gt_mask(lhs.v, rhs.v);
@@ -929,7 +930,7 @@ public:
     }
 
     [[nodiscard]] friend constexpr unsigned int le(numeric_array const &lhs, numeric_array const &rhs) noexcept
-        requires(N <= sizeof(unsigned int) * CHAR_BIT)
+        requires (N <= sizeof(unsigned int) * CHAR_BIT)
     {
         if (is_f32x4 && has_sse && !std::is_constant_evaluated()) {
             return f32x4_sse_le_mask(lhs.v, rhs.v);
@@ -943,7 +944,7 @@ public:
     }
 
     [[nodiscard]] friend constexpr unsigned int ge(numeric_array const &lhs, numeric_array const &rhs) noexcept
-        requires(N <= sizeof(unsigned int) * CHAR_BIT)
+        requires (N <= sizeof(unsigned int) * CHAR_BIT)
     {
         if (is_f32x4 && has_sse && !std::is_constant_evaluated()) {
             return f32x4_sse_ge_mask(lhs.v, rhs.v);

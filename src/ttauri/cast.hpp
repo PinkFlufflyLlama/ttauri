@@ -9,6 +9,7 @@
 #include "assert.hpp"
 #include <type_traits>
 #include <concepts>
+#include <climits>
 #include <limits>
 
 namespace tt {
