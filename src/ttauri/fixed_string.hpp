@@ -6,6 +6,9 @@
 
 #pragma once
 
+#include <algorithm>
+#include <cstring>
+
 namespace tt {
 
 /**
