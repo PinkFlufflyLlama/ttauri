@@ -7,6 +7,7 @@
 #include "os_detect.hpp"
 #include "memory.hpp"
 #include "assert.hpp"
+#include "bit_cast.hpp"
 
 #if TT_COMPILER == TT_CC_MSVC
 #include <stdlib.h>
@@ -53,13 +54,13 @@ template<typename T, std::enable_if_t<std::is_floating_point_v<T>,T> = 0>
 [[nodiscard]] T byte_swap(T x) noexcept
 {
     if constexpr (std::is_same_v<T, float>) {
-        auto utmp = std::bit_cast<uint32_t>(x);
+        auto utmp = bit_cast<uint32_t>(x);
         utmp = byte_swap(utmp);
-        return std::bit_cast<float>(x);
+        return bit_cast<float>(x);
     } else if constexpr (std::is_same_v<T, double>) {
-        auto utmp = std::bit_cast<uint64_t>(x);
+        auto utmp = bit_cast<uint64_t>(x);
         utmp = byte_swap(utmp);
-        return std::bit_cast<double>(x);
+        return bit_cast<double>(x);
     } else {
         tt_no_default();
     }

@@ -43,6 +43,7 @@ target_sources(ttauri PRIVATE
     bezier_point.hpp
     bigint.hpp
     bits.hpp
+    bit_cast.hpp
     byte_string.hpp
     cell_address.hpp
     check.hpp
