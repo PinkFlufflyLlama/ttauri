@@ -51,8 +51,6 @@ struct grapheme_break_state {
  */
 void wrap_lines(auto first, auto last, float max_width, auto get_width, auto get_code_point, auto set_code_point) noexcept
 {
-    using enum unicode_general_category;
-
     auto it_at_last_space = last;
     float width_at_last_space = 0.0;
     float current_width = 0.0;
@@ -60,16 +58,16 @@ void wrap_lines(auto first, auto last, float max_width, auto get_width, auto get
     for (auto it = first; it != last; ++it) {
         ttlet code_point = get_code_point(*it);
         ttlet description = unicode_description_find(code_point);
-        ttlet general_category = description->general_category();
+        ttlet general_category = description.general_category();
 
-        if (general_category == Zp || general_category == Zl) {
+        if (general_category == unicode_general_category::Zp || general_category == unicode_general_category::Zl) {
             // Reset the line on existing line and paragraph separator.
             it_at_last_space = last;
             width_at_last_space = 0.0f;
             current_width = 0.0;
             continue;
 
-        } else if (general_category == Zs) {
+        } else if (general_category == unicode_general_category::Zs) {
             // Remember the length of the line at the end of the word.
             it_at_last_space = it;
             width_at_last_space = current_width;
