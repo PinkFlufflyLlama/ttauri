@@ -236,21 +236,21 @@ public:
     [[nodiscard]] friend constexpr T &get(aligned_array &rhs) noexcept
     {
         static_assert(I < N, "Index out of bounds");
-        return get<I>(rhs.v);
+        return std::get<I>(rhs.v);
     }
 
     template<std::size_t I>
     [[nodiscard]] friend constexpr T get(aligned_array &&rhs) noexcept
     {
         static_assert(I < N, "Index out of bounds");
-        return get<I>(rhs.v);
+        return std::get<I>(rhs.v);
     }
 
     template<std::size_t I>
     [[nodiscard]] friend constexpr T const &get(aligned_array const &rhs) noexcept
     {
         static_assert(I < N, "Index out of bounds");
-        return get<I>(rhs.v);
+        return std::get<I>(rhs.v);
     }
 
     [[nodiscard]] constexpr friend bool operator==(aligned_array const &lhs, aligned_array const &rhs) noexcept
