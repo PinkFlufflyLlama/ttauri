@@ -41,72 +41,78 @@ enum class unicode_bidi_class : uint8_t {
 
 [[nodiscard]] constexpr bool is_isolate_starter(unicode_bidi_class const &rhs) noexcept
 {
-    using enum unicode_bidi_class;
-    return rhs == LRI || rhs == RLI || rhs == FSI;
+    return rhs == tt::unicode_bidi_class::LRI
+        || rhs == tt::unicode_bidi_class::RLI
+        || rhs == tt::unicode_bidi_class::FSI;
 }
 
 [[nodiscard]] constexpr bool is_isolate_formatter(unicode_bidi_class const &rhs) noexcept
 {
-    using enum unicode_bidi_class;
-    return is_isolate_starter(rhs) || rhs == PDI;
+    return is_isolate_starter(rhs)
+        || rhs == tt::unicode_bidi_class::PDI;
 }
 
 [[nodiscard]] constexpr bool is_NI(unicode_bidi_class const &rhs) noexcept
 {
-    using enum unicode_bidi_class;
-    return rhs == B || rhs == S || rhs == WS || rhs == ON || rhs == FSI || rhs == LRI || rhs == RLI || rhs == PDI;
+    return rhs == tt::unicode_bidi_class::B
+        || rhs == tt::unicode_bidi_class::S
+        || rhs == tt::unicode_bidi_class::WS
+        || rhs == tt::unicode_bidi_class::ON
+        || rhs == tt::unicode_bidi_class::FSI
+        || rhs == tt::unicode_bidi_class::LRI
+        || rhs == tt::unicode_bidi_class::RLI
+        || rhs == tt::unicode_bidi_class::PDI;
 }
 
 [[nodiscard]] constexpr unicode_bidi_class unicode_bidi_class_from_string(std::string_view str) noexcept
 {
-    using enum unicode_bidi_class;
 
     if (str == "L") {
-        return L;
+        return tt::unicode_bidi_class::L;
     } else if (str == "R") {
-        return R;
+        return tt::unicode_bidi_class::R;
     } else if (str == "AL") {
-        return AL;
+        return tt::unicode_bidi_class::AL;
     } else if (str == "EN") {
-        return EN;
+        return tt::unicode_bidi_class::EN;
     } else if (str == "ES") {
-        return ES;
+        return tt::unicode_bidi_class::ES;
     } else if (str == "ET") {
-        return ET;
+        return tt::unicode_bidi_class::ET;
     } else if (str == "AN") {
-        return AN;
+        return tt::unicode_bidi_class::AN;
     } else if (str == "CS") {
-        return CS;
+        return tt::unicode_bidi_class::CS;
     } else if (str == "NSM") {
-        return NSM;
+        return tt::unicode_bidi_class::NSM;
     } else if (str == "BN") {
-        return BN;
+        return tt::unicode_bidi_class::BN;
     } else if (str == "B") {
-        return B;
+        return tt::unicode_bidi_class::B;
     } else if (str == "S") {
-        return S;
+        return tt::unicode_bidi_class::S;
     } else if (str == "WS") {
-        return WS;
+        return tt::unicode_bidi_class::WS;
     } else if (str == "ON") {
-        return ON;
+        return tt::unicode_bidi_class::ON;
     } else if (str == "LRE") {
-        return LRE;
+        return tt::unicode_bidi_class::LRE;
     } else if (str == "LRO") {
-        return LRO;
+        return tt::unicode_bidi_class::LRO;
     } else if (str == "RLE") {
-        return RLE;
+        return tt::unicode_bidi_class::RLE;
     } else if (str == "RLO") {
-        return RLO;
+        return tt::unicode_bidi_class::RLO;
     } else if (str == "PDF") {
-        return PDF;
+        return tt::unicode_bidi_class::PDF;
     } else if (str == "LRI") {
-        return LRI;
+        return tt::unicode_bidi_class::LRI;
     } else if (str == "RLI") {
-        return RLI;
+        return tt::unicode_bidi_class::RLI;
     } else if (str == "FSI") {
-        return FSI;
+        return tt::unicode_bidi_class::FSI;
     } else if (str == "PDI") {
-        return PDI;
+        return tt::unicode_bidi_class::PDI;
     } else {
         tt_no_default();
     }
