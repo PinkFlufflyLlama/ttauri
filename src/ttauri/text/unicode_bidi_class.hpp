@@ -2,6 +2,8 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
 
+// TODO: When using enum is added to stable gcc use using enum over directly referencing them
+
 #pragma once
 
 #include <cstdint>
@@ -41,78 +43,78 @@ enum class unicode_bidi_class : uint8_t {
 
 [[nodiscard]] constexpr bool is_isolate_starter(unicode_bidi_class const &rhs) noexcept
 {
-    return rhs == tt::unicode_bidi_class::LRI
-        || rhs == tt::unicode_bidi_class::RLI
-        || rhs == tt::unicode_bidi_class::FSI;
+    return rhs == unicode_bidi_class::LRI
+        || rhs == unicode_bidi_class::RLI
+        || rhs == unicode_bidi_class::FSI;
 }
 
 [[nodiscard]] constexpr bool is_isolate_formatter(unicode_bidi_class const &rhs) noexcept
 {
     return is_isolate_starter(rhs)
-        || rhs == tt::unicode_bidi_class::PDI;
+        || rhs == unicode_bidi_class::PDI;
 }
 
 [[nodiscard]] constexpr bool is_NI(unicode_bidi_class const &rhs) noexcept
 {
-    return rhs == tt::unicode_bidi_class::B
-        || rhs == tt::unicode_bidi_class::S
-        || rhs == tt::unicode_bidi_class::WS
-        || rhs == tt::unicode_bidi_class::ON
-        || rhs == tt::unicode_bidi_class::FSI
-        || rhs == tt::unicode_bidi_class::LRI
-        || rhs == tt::unicode_bidi_class::RLI
-        || rhs == tt::unicode_bidi_class::PDI;
+    return rhs == unicode_bidi_class::B
+        || rhs == unicode_bidi_class::S
+        || rhs == unicode_bidi_class::WS
+        || rhs == unicode_bidi_class::ON
+        || rhs == unicode_bidi_class::FSI
+        || rhs == unicode_bidi_class::LRI
+        || rhs == unicode_bidi_class::RLI
+        || rhs == unicode_bidi_class::PDI;
 }
 
 [[nodiscard]] constexpr unicode_bidi_class unicode_bidi_class_from_string(std::string_view str) noexcept
 {
 
     if (str == "L") {
-        return tt::unicode_bidi_class::L;
+        return unicode_bidi_class::L;
     } else if (str == "R") {
-        return tt::unicode_bidi_class::R;
+        return unicode_bidi_class::R;
     } else if (str == "AL") {
-        return tt::unicode_bidi_class::AL;
+        return unicode_bidi_class::AL;
     } else if (str == "EN") {
-        return tt::unicode_bidi_class::EN;
+        return unicode_bidi_class::EN;
     } else if (str == "ES") {
-        return tt::unicode_bidi_class::ES;
+        return unicode_bidi_class::ES;
     } else if (str == "ET") {
-        return tt::unicode_bidi_class::ET;
+        return unicode_bidi_class::ET;
     } else if (str == "AN") {
-        return tt::unicode_bidi_class::AN;
+        return unicode_bidi_class::AN;
     } else if (str == "CS") {
-        return tt::unicode_bidi_class::CS;
+        return unicode_bidi_class::CS;
     } else if (str == "NSM") {
-        return tt::unicode_bidi_class::NSM;
+        return unicode_bidi_class::NSM;
     } else if (str == "BN") {
-        return tt::unicode_bidi_class::BN;
+        return unicode_bidi_class::BN;
     } else if (str == "B") {
-        return tt::unicode_bidi_class::B;
+        return unicode_bidi_class::B;
     } else if (str == "S") {
-        return tt::unicode_bidi_class::S;
+        return unicode_bidi_class::S;
     } else if (str == "WS") {
-        return tt::unicode_bidi_class::WS;
+        return unicode_bidi_class::WS;
     } else if (str == "ON") {
-        return tt::unicode_bidi_class::ON;
+        return unicode_bidi_class::ON;
     } else if (str == "LRE") {
-        return tt::unicode_bidi_class::LRE;
+        return unicode_bidi_class::LRE;
     } else if (str == "LRO") {
-        return tt::unicode_bidi_class::LRO;
+        return unicode_bidi_class::LRO;
     } else if (str == "RLE") {
-        return tt::unicode_bidi_class::RLE;
+        return unicode_bidi_class::RLE;
     } else if (str == "RLO") {
-        return tt::unicode_bidi_class::RLO;
+        return unicode_bidi_class::RLO;
     } else if (str == "PDF") {
-        return tt::unicode_bidi_class::PDF;
+        return unicode_bidi_class::PDF;
     } else if (str == "LRI") {
-        return tt::unicode_bidi_class::LRI;
+        return unicode_bidi_class::LRI;
     } else if (str == "RLI") {
-        return tt::unicode_bidi_class::RLI;
+        return unicode_bidi_class::RLI;
     } else if (str == "FSI") {
-        return tt::unicode_bidi_class::FSI;
+        return unicode_bidi_class::FSI;
     } else if (str == "PDI") {
-        return tt::unicode_bidi_class::PDI;
+        return unicode_bidi_class::PDI;
     } else {
         tt_no_default();
     }
