@@ -66,6 +66,11 @@ public:
         return matrix<D>{col0, col1, col2, one};
     }
 
+    /*
+    // Caleb asking about should it use atan rather than atan2
+    // Tjienta: Yea, that thing should probably be commented out, nothing is using this function yet. In fact nothing is using the rotation class yet
+    // I have taken the action of commenting it out, this function will need proper testing when uncommenting to make sure it works with atan() or needs the proper paramaters passed to atan2()
+
     std::pair<float, vector<3>> angle_and_axis() const noexcept requires(D == 3)
     {
         ttlet rcp_length = rcp_hypot<0b0111>(_v);
@@ -73,6 +78,7 @@ public:
 
         return {2.0f * std::atan2(length), vector<3>{_v.xyz0() * rcp_length}};
     }
+    */
 
 private:
     /** rotation is stored as a quaternion
