@@ -7,6 +7,7 @@
 #include "font_glyph_ids.hpp"
 #include "attributed_grapheme.hpp"
 #include "glyph_metrics.hpp"
+#include "../numeric_array.hpp"
 #include "../graphic_path.hpp"
 #include "../geometry/translate.hpp"
 
