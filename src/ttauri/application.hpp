@@ -9,6 +9,7 @@
 #include "timer.hpp"
 #include "datum.hpp"
 #include "GUI/gui_window_size.hpp"
+#include "os_detect.hpp"
 #include <span>
 #include <memory>
 #include <string>
