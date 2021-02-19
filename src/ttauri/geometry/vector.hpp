@@ -29,7 +29,7 @@ public:
     /** Construct a vector from a lower dimension vector.
      */
     template<int E>
-    requires(E < D) [[nodiscard]] constexpr vector(vector<E> const &other) noexcept : _v(static_cast<f32x4>(other))
+    [[nodiscard]] constexpr vector(vector<E> const &other) noexcept requires(E < D) : _v(static_cast<f32x4>(other))
     {
         tt_axiom(is_valid());
     }
