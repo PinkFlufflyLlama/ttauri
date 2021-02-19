@@ -407,9 +407,8 @@ external/googletest/googletest/generated/gtest.pc
 external/googletest/googletest/generated/GTestConfig.cmake
 external/googletest/googletest/generated/GTestConfigVersion.cmake
 
-
+# Generated shaders
 src/ttauri/GUI/pipeline_box.frag.spv
-.gitignore
 src/ttauri/GUI/pipeline_box.frag.spv.inl
 src/ttauri/GUI/pipeline_box.vert.spv
 src/ttauri/GUI/pipeline_box.vert.spv.inl
