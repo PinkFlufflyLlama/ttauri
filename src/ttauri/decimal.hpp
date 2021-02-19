@@ -499,7 +499,7 @@ private:
         return static_cast<uint64_t>(m) << exponent_bits | static_cast<uint8_t>(e);
     }
 
-    [[nodiscard]] static std::pair<int, long long> to_exponent_mantissa(double x) noexcept
+    [[nodiscard]] constexpr static std::pair<int, long long> to_exponent_mantissa(double x) noexcept
     {
         uint64_t x_;
         std::memcpy(&x_, &x, sizeof(x_));
@@ -541,7 +541,7 @@ private:
         return {e10, m};
     }
 
-    [[nodiscard]] std::pair<int, long long> to_exponent_mantissa(std::string_view str)
+    [[nodiscard]] constexpr std::pair<int, long long> to_exponent_mantissa(std::string_view str)
     {
         std::string mantissa_str;
 
