@@ -202,6 +202,11 @@ using file_handle = os_handle;
 using os_handle = int;
 using file_handle = int;
 
+#elif TT_OPERATING_SYSTEM == TT_OS_LINUX
+// TODO: Using temporary types, make sure is correct
+using os_handle = int;
+using file_handle = int;
+
 #else
 #error "file_handle Not implemented."
 #endif
