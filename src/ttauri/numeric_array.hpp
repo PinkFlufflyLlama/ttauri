@@ -1487,7 +1487,7 @@ private:
     container_type v;
 
     template<int I, typename First, typename... Rest>
-    [[nodiscard]] friend constexpr void
+    friend constexpr void
     transpose_detail(First const &first, Rest const &...rest, std::array<numeric_array, N> &r) noexcept
     {
         for (ssize_t j = 0; j != N; ++j) {
@@ -1500,7 +1500,7 @@ private:
     }
 
     template<ssize_t I, ssize_t FirstElement, ssize_t... RestElements>
-    [[nodiscard]] constexpr void swizzle_detail(numeric_array &r) const noexcept
+    constexpr void swizzle_detail(numeric_array &r) const noexcept
     {
         static_assert(I < N);
         static_assert(FirstElement >= -2 && FirstElement < N, "Index out of bounds");
