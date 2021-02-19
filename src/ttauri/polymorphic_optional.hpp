@@ -197,7 +197,7 @@ private:
 
     union {
         std::array<std::byte, capacity> buffer;
-        pointer pointer;
+        pointer _pointer;
     } _value;
     state _state;
 
@@ -226,14 +226,14 @@ private:
     [[nodiscard]] const_pointer external_pointer() const noexcept
     {
         tt_axiom(_state == state::external);
-        return std::launder(_value.pointer);
+        return std::launder(_value._pointer);
         ;
     }
 
     [[nodiscard]] pointer external_pointer() noexcept
     {
         tt_axiom(_state == state::external);
-        return std::launder(_value.pointer);
+        return std::launder(_value._pointer);
         ;
     }
 
