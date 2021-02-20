@@ -56,7 +56,7 @@ class Decomposition (object):
 
 class UnicodeDescription (object):
     def __init__(self, codePoint, generalCategory, decomposition, decompositionIsCanonical, decompositionOrder, bidiClass, bidiMirrored):
-        self.codePoint = codePoint;
+        self.codePoint = codePoint
         self.generalCategory = generalCategory
         self.graphemeClusterBreak = "Other"
         self.bidiClass = bidiClass
@@ -228,7 +228,7 @@ def extractCompositions(descriptions, composition_exclusions):
     compositions = []
     for description in descriptions:
         if isCanonicalComposition(description, composition_exclusions):
-            description.compositionIsCanonical = True;
+            description.compositionIsCanonical = True
             composition = Composition(
                 description=description,
                 startCodePoint=description.decomposition[0],
