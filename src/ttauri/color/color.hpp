@@ -110,7 +110,7 @@ public:
         return color{lhs._v * rhs._v};
     }
 
-    [[nodiscard]] constexpr friend color composit(color const &lhs, color const &rhs) noexcept
+    [[nodiscard]] friend color composit(color const &lhs, color const &rhs) noexcept
     {
         return color{composit(lhs._v, rhs._v)};
     }
