@@ -397,6 +397,9 @@ data/ttauri_icons.ttf.inl
 data/elusiveicons-webfont.ttf.inl
 tools/CMakeFiles/BinaryToCPP.dir/C.includecache
 CMakeFiles/
+CMakeCache.txt
+CMakeDoxyfile.in
+CMakeDoxygenDefaults.cmake
 
 # External and google test auto generated files
 external/date/dateConfigVersion.cmake
