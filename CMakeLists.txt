@@ -125,6 +125,13 @@ if (${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
         target_compile_options(ttauri PUBLIC -mtune=skylake)
     endif()
 
+elseif (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+
+    # IvyBridge:                     F16C             FSGSBASE, AVX,           AES, PCLMUL        MMX, SSE, SSE2, SSE3,        SSSE3, SSE4.1, SSE4.2,     POPCNT, RDRND
+    # Steamroller 0x15-v3: BMI, TBM, F16C, FMA, FMA4, FSGSBASE, AVX, XOP, LWP, AES, PCLMUL, CX16, MMX, SSE, SSE2, SSE3, SSE4A, SSSE3, SSE4.1, SSE4.2, ABM 
+    # POPCNT is supported by Steamroller through he SSE4A instruction set.
+    target_compile_options(ttauri PUBLIC -mf16c -mfsgsbase -mavx -maes -mpclmul -mmmx -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt)
+
 elseif (MSVC)
     # Turn on a lot of warnings by default.
     target_compile_options(ttauri PUBLIC -W4)
