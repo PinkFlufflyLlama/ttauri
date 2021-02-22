@@ -5,6 +5,7 @@
 #pragma once
 
 #include "os_detect.hpp"
+#include "bit_ceil.hpp"
 
 #if TT_PROCESSOR == TT_CPU_X64
 #include <xmmintrin.h>
@@ -20,7 +21,7 @@
 namespace tt {
 
 template<typename T, size_t N>
-struct alignas(sizeof(T) * std::bit_ceil(N)) aligned_array {
+struct alignas(sizeof(T) * bit_ceil(N)) aligned_array {
 public:
     using container_type = std::array<T,N>;
     using value_type = typename container_type::value_type;

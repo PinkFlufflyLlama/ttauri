@@ -44,6 +44,7 @@ target_sources(ttauri PRIVATE
     bigint.hpp
     bits.hpp
     bit_cast.hpp
+    bit_ceil.hpp
     byte_string.hpp
     cell_address.hpp
     check.hpp
