@@ -3,6 +3,8 @@
   https://en.cppreference.com/w/cpp/numeric/bit_cast
 */
 
+// TODO: test me!
+
 #include <cstring>
 #include <type_traits>
 
