@@ -7,6 +7,7 @@
 #include "required.hpp"
 #include "cast.hpp"
 #include "type_traits.hpp"
+#include "bit_cast.hpp"
 #include <complex>
 #include <cmath>
 #include <limits>
@@ -84,8 +85,8 @@ constexpr T median(T a, T b, T c) noexcept {
 constexpr bool almost_equal(float a, float b) noexcept {
     constexpr int32_t epsilon = 5;
 
-    ttlet a_ = std::bit_cast<int32_t>(a);
-    ttlet b_ = std::bit_cast<int32_t>(b);
+    ttlet a_ = bit_cast<int32_t>(a);
+    ttlet b_ = bit_cast<int32_t>(b);
 
     // Strip the sign bit, and extend to not overflow when calculating the delta.
     ttlet a_abs = static_cast<int64_t>(a_ & 0x7ffffff);
