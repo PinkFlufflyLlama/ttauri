@@ -154,7 +154,7 @@ inline results<T,2> solvePolynomial(T const &a, T const &b, T const &c) noexcept
         } else if (D == 0) {
             return { -b / (static_cast<T>(2)*a) };
         } else {
-            ttlet Dsqrt = sqrt(D);
+            ttlet Dsqrt = static_cast<T>(sqrt(D));
             return {
                 (-b - Dsqrt) / (static_cast<T>(2)*a),
                 (-b + Dsqrt) / (static_cast<T>(2)*a)
@@ -174,9 +174,9 @@ inline results<T,3> solveDepressedCubicTrig(T const &p, T const &q) noexcept {
     ttlet U = oneThird * acos(((static_cast<T>(3)*q) / (static_cast<T>(2)*p)) * sqrt(static_cast<T>(-3)/p));
     ttlet V = static_cast<T>(2) * sqrt(-oneThird * p);
 
-    ttlet t0 = V * cos(U);
-    ttlet t1 = V * cos(U - pi2_3);
-    ttlet t2 = V * cos(U - pi4_3);
+    ttlet t0 = static_cast<T>(V * cos(U));
+    ttlet t1 = static_cast<T>(V * cos(U - pi2_3));
+    ttlet t2 = static_cast<T>(V * cos(U - pi4_3));
     return { t0, t1, t2 };
 }
 
@@ -186,7 +186,7 @@ inline results<T,3> solveDepressedCubicCardano(T const &p, T const &q, T const &
     ttlet minusHalfQ = static_cast<T>(-0.5) * q;
     ttlet v = cbrt(minusHalfQ + sqrtD);
     ttlet w = cbrt(minusHalfQ - sqrtD);
-    return { v + w };
+    return { static_cast<T>(v + w) };
 }
 
 /*! Solve cubic function in the form.
