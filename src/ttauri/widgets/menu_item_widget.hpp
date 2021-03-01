@@ -239,7 +239,7 @@ public:
 
             ttlet height = _label_stencil->preferred_extent().height() + theme::global->margin * 2.0f;
             this->_preferred_size = {
-                f32x4{width, height}, f32x4{std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity()}};
+                extent2{width, height}, extent2{std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity()}};
             return true;
         } else {
             return false;
@@ -287,13 +287,22 @@ public:
     {
         tt_axiom(gui_system_mutex.recurse_lock_count());
 
-        if (overlaps(context, this->window_clipping_rectangle())) {
+        if (overlaps(context, this->_clipping_rectangle)) {
             draw_background(context);
             draw_check_mark(context);
             draw_label(context);
         }
 
         super::draw(std::move(context), display_time_point);
+    }
+
+    [[nodiscard]] color focus_color() const noexcept override
+    {
+        if (this->_focus) {
+            return super::focus_color();
+        } else {
+            return this->background_color();
+        }
     }
 
 private:
@@ -309,32 +318,18 @@ private:
     void draw_background(draw_context context) noexcept
     {
         tt_axiom(gui_system_mutex.recurse_lock_count());
-
-        context.line_color = context.fill_color;
-        if (this->_focus && this->window.active) {
-            context.line_color = theme::global->accentColor;
-        }
-
-        context.draw_box_with_border_inside(this->rectangle());
+        context.draw_box_with_border_inside(this->rectangle(), this->background_color(), this->focus_color());
     }
 
     void draw_label(draw_context context) noexcept
     {
-        context.transform = translate3{0.0f, 0.0f, 0.1f} * context.transform;
-        if (*this->enabled) {
-            context.line_color = theme::global->foregroundColor;
-        }
-        _label_stencil->draw(context);
+        _label_stencil->draw(context, this->label_color(), translate_z(0.1f));
     }
 
     void draw_check_mark(draw_context context) noexcept
     {
         if (this->value == this->true_value) {
-            context.transform = translate3{0.0f, 0.0f, 0.1f} * context.transform;
-            if (*this->enabled) {
-                context.line_color = theme::global->foregroundColor;
-            }
-            _check_mark_stencil->draw(context);
+            _check_mark_stencil->draw(context, this->accent_color(), translate_z(0.1f));
         }
     }
 };

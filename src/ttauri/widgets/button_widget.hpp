@@ -50,7 +50,7 @@ public:
 
         if (super::update_constraints(display_time_point, need_reconstrain)) {
             _label_stencil = stencil::make_unique(alignment::middle_center, *label, theme::global->labelStyle);
-            this->_preferred_size = interval_vec2::make_minimum(_label_stencil->preferred_extent() + theme::global->margin2Dx2);
+            this->_preferred_size = interval_extent2::make_minimum(_label_stencil->preferred_extent() + extent2{theme::global->margin2Dx2});
             return true;
         } else {
             return false;
@@ -68,24 +68,25 @@ public:
         super::update_layout(displayTimePoint, need_layout);
     }
 
+    [[nodiscard]] color background_color() const noexcept override
+    {
+        if (*this->value) {
+            return this->accent_color();
+        } else {
+            return super::background_color();
+        }
+    }
+
     void draw(draw_context context, hires_utc_clock::time_point display_time_point) noexcept override
     {
         tt_axiom(gui_system_mutex.recurse_lock_count());
 
-        if (overlaps(context, this->window_clipping_rectangle())) {
-            context.corner_shapes = f32x4::broadcast(theme::global->roundingRadius);
-            if (*this->value) {
-                context.fill_color = theme::global->accentColor;
-            }
-
+        if (overlaps(context, this->_clipping_rectangle)) {
             // Move the border of the button in the middle of a pixel.
-            context.draw_box_with_border_inside(this->rectangle());
+            context.draw_box_with_border_inside(
+                this->rectangle(), this->background_color(), this->focus_color(), corner_shapes{theme::global->roundingRadius});
 
-            if (*this->enabled) {
-                context.line_color = theme::global->foregroundColor;
-            }
-            context.transform = translate3{0.0f, 0.0f, 0.1f} * context.transform;
-            _label_stencil->draw(context, true);
+            _label_stencil->draw(context, this->label_color(), translate_z(0.1f));
         }
 
         super::draw(std::move(context), display_time_point);
@@ -95,7 +96,7 @@ public:
     {
         ttlet lock = std::scoped_lock(gui_system_mutex);
         if (compare_then_assign(this->value, !this->value)) {
-            this->window.request_redraw(this->window_clipping_rectangle());
+            this->window.request_redraw(aarect{this->_local_to_window * this->_clipping_rectangle});
         }
     }
 

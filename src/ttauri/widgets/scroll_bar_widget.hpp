@@ -55,16 +55,15 @@ public:
             ttlet minimum_length = theme::global->width; // even for vertical bars.
 
             if constexpr (is_vertical) {
-                _preferred_size = interval_vec2{
-                    f32x4{theme::global->scroll_bar_thickness, minimum_length},
-                    f32x4{theme::global->scroll_bar_thickness, std::numeric_limits<float>::max()}};
+                _preferred_size = interval_extent2{
+                    extent2{theme::global->scroll_bar_thickness, minimum_length},
+                    extent2{theme::global->scroll_bar_thickness, std::numeric_limits<float>::max()}};
             } else {
-                _preferred_size = interval_vec2{
-                    f32x4{minimum_length, theme::global->scroll_bar_thickness},
-                    f32x4{std::numeric_limits<float>::max(), theme::global->scroll_bar_thickness}};
+                _preferred_size = interval_extent2{
+                    extent2{minimum_length, theme::global->scroll_bar_thickness},
+                    extent2{std::numeric_limits<float>::max(), theme::global->scroll_bar_thickness}};
             }
 
-            _preferred_base_line = {};
             return true;
         } else {
             return false;
@@ -97,19 +96,18 @@ public:
     {
         tt_axiom(gui_system_mutex.recurse_lock_count());
 
-        if (overlaps(context, this->window_clipping_rectangle()) && visible()) {
+        if (overlaps(context, this->_clipping_rectangle) && visible()) {
             draw_rails(context);
             draw_slider(context);
         }
         super::draw(std::move(context), display_time_point);
     }
 
-    hit_box hitbox_test(f32x4 window_position) const noexcept override
+    hit_box hitbox_test(point2 position) const noexcept override
     {
         ttlet lock = std::scoped_lock(gui_system_mutex);
-        ttlet position = _from_window_transform * window_position;
 
-        if (window_clipping_rectangle().contains(window_position) && slider_rectangle.contains(position) && visible()) {
+        if (slider_rectangle.contains(position) && visible()) {
             return hit_box{weak_from_this(), _draw_layer};
         } else {
             return hit_box{};
@@ -120,17 +118,17 @@ public:
     {
         ttlet lock = std::scoped_lock(gui_system_mutex);
         auto handled = super::handle_event(event);
-        
+
         if (event.cause.leftButton) {
             handled = true;
-            
+
             switch (event.type) {
-            using enum mouse_event::Type;
+                using enum mouse_event::Type;
             case ButtonDown:
                 // Record the original scroll-position before the drag starts.
                 offset_before_drag = *offset;
                 break;
-        
+
             case Drag: {
                 // The distance the slider has to move relative to the slider position at the
                 // start of the drag.
@@ -138,7 +136,7 @@ public:
                 ttlet content_movement = slider_movement * hidden_content_vs_travel_ratio();
                 offset = offset_before_drag + content_movement;
             } break;
-        
+
             default:;
             }
         }
@@ -154,9 +152,24 @@ public:
      * When the content is the same size as the scroll-view then
      * the scrollbar becomes invisible.
      */
-    [[nodiscard]] bool visible() const noexcept {
+    [[nodiscard]] bool visible() const noexcept
+    {
         tt_axiom(gui_system_mutex.recurse_lock_count());
         return hidden_content() >= 1.0f;
+    }
+
+    [[nodiscard]] color background_color() const noexcept override
+    {
+        return theme::global->fillColor(_semantic_layer);
+    }
+
+    [[nodiscard]] color foreground_color() const noexcept override
+    {
+        if (_hover) {
+            return theme::global->fillColor(_semantic_layer + 2);
+        } else {
+            return theme::global->fillColor(_semantic_layer + 1);
+        }
     }
 
 private:
@@ -230,29 +243,19 @@ private:
     {
         tt_axiom(gui_system_mutex.recurse_lock_count());
 
-        context.line_color = theme::global->fillColor(_semantic_layer);
-        context.fill_color = theme::global->fillColor(_semantic_layer);
-        if constexpr (is_vertical) {
-            context.corner_shapes = f32x4::broadcast(rectangle().width() * 0.5f);
-        } else {
-            context.corner_shapes = f32x4::broadcast(rectangle().height() * 0.5f);
-        }
-        context.draw_box_with_border_inside(rectangle());
+        ttlet corner_shapes =
+            is_vertical ? tt::corner_shapes{rectangle().width() * 0.5f} : tt::corner_shapes{rectangle().height() * 0.5f};
+        context.draw_box(rectangle(), background_color(), corner_shapes);
     }
 
     void draw_slider(draw_context context) noexcept
     {
         tt_axiom(gui_system_mutex.recurse_lock_count());
 
-        context.line_color = theme::global->fillColor(_semantic_layer + 1);
-        context.fill_color = theme::global->fillColor(_semantic_layer + 1);
-        context.transform = translate3{0.0f, 0.0f, 0.1f} * context.transform;
-        if constexpr (is_vertical) {
-            context.corner_shapes = f32x4::broadcast(slider_rectangle.width() * 0.5f);
-        } else {
-            context.corner_shapes = f32x4::broadcast(slider_rectangle.height() * 0.5f);
-        }
-        context.draw_box_with_border_inside(slider_rectangle);
+        ttlet corner_shapes = is_vertical ? tt::corner_shapes{slider_rectangle.width() * 0.5f} :
+                                            tt::corner_shapes{slider_rectangle.height() * 0.5f};
+
+        context.draw_box(translate_z(0.1f) * slider_rectangle, foreground_color(), corner_shapes);
     }
 };
 

@@ -58,8 +58,7 @@ public:
                 std::max({_on_label_stencil->preferred_extent().width(), _off_label_stencil->preferred_extent().width()}) +
                 theme::global->smallSize * 2.0f + theme::global->margin;
 
-            _preferred_size = interval_vec2::make_minimum(minimumWidth, minimumHeight);
-            _preferred_base_line = relative_base_line{vertical_alignment::top, -theme::global->smallSize * 0.5f};
+            _preferred_size = interval_extent2::make_minimum(minimumWidth, minimumHeight);
 
             return true;
         } else {
@@ -75,7 +74,7 @@ public:
         if (need_layout) {
             _rail_rectangle = aarect{
                 -0.5f, // Expand horizontally due to rounded shape
-                base_line() - theme::global->smallSize * 0.5f,
+                std::round(base_line() - theme::global->smallSize * 0.5f),
                 theme::global->smallSize * 2.0f + 1.0f, // Expand horizontally due to rounded shape
                 theme::global->smallSize};
 
@@ -85,7 +84,7 @@ public:
             _off_label_stencil->set_layout_parameters(_label_rectangle, base_line());
 
             _slider_rectangle =
-                shrink(aarect{0.0f, _rail_rectangle.y(), _rail_rectangle.height(), _rail_rectangle.height()}, 1.5f);
+                shrink(aarect{0.0f, _rail_rectangle.y(), _rail_rectangle.height(), _rail_rectangle.height()}, 2.5f);
 
             ttlet sliderMoveWidth = theme::global->smallSize * 2.0f - (_slider_rectangle.x() * 2.0f);
             _slider_move_range = sliderMoveWidth - _slider_rectangle.width();
@@ -98,7 +97,7 @@ public:
     {
         tt_axiom(gui_system_mutex.recurse_lock_count());
 
-        if (overlaps(context, this->window_clipping_rectangle())) {
+        if (overlaps(context, _clipping_rectangle)) {
             draw_rail(context);
             draw_slider(context);
             draw_label(context);
@@ -124,55 +123,37 @@ private:
     decltype(on_label)::callback_ptr_type _on_label_callback;
     decltype(off_label)::callback_ptr_type _off_label_callback;
 
-    void draw_rail(draw_context drawContext) noexcept
+    void draw_rail(draw_context draw_context) noexcept
     {
         tt_axiom(gui_system_mutex.recurse_lock_count());
 
-        drawContext.corner_shapes = f32x4::broadcast(_rail_rectangle.height() * 0.5f);
-        drawContext.draw_box_with_border_inside(_rail_rectangle);
+        draw_context.draw_box_with_border_inside(
+            _rail_rectangle, background_color(), focus_color(), corner_shapes{_rail_rectangle.height() * 0.5f});
     }
 
-    void draw_slider(draw_context drawContext) noexcept
+    void draw_slider(draw_context draw_context) noexcept
     {
         tt_axiom(gui_system_mutex.recurse_lock_count());
 
         // Prepare animation values.
         ttlet animationProgress = value.animation_progress(_animation_duration);
         if (animationProgress < 1.0f) {
-            window.request_redraw(window_clipping_rectangle());
+            window.request_redraw(aarect{_local_to_window * _clipping_rectangle});
         }
 
         ttlet animatedValue = to_float(value, _animation_duration);
+        ttlet positionedSliderRectangle = translate3{_slider_move_range * animatedValue, 0.0f, 0.1f} * _slider_rectangle;
 
-        ttlet positionedSliderRectangle = translate2(_slider_move_range * animatedValue, 0.0f) * _slider_rectangle;
-
-        if (*value) {
-            if (*enabled && window.active) {
-                drawContext.line_color = theme::global->accentColor;
-            }
-        } else {
-            if (*enabled && window.active) {
-                drawContext.line_color =
-                    _hover ? theme::global->borderColor(_semantic_layer + 1) : theme::global->borderColor(_semantic_layer);
-            }
-        }
-        std::swap(drawContext.line_color, drawContext.fill_color);
-        drawContext.transform = translate3{0.0f, 0.0f, 0.1f} * drawContext.transform;
-        drawContext.corner_shapes = f32x4::broadcast(positionedSliderRectangle.height() * 0.5f);
-        drawContext.draw_box_with_border_inside(positionedSliderRectangle);
+        draw_context.draw_box(
+            positionedSliderRectangle, accent_color(), corner_shapes{positionedSliderRectangle.height() * 0.5f});
     }
 
-    void draw_label(draw_context drawContext) noexcept
+    void draw_label(draw_context draw_context) noexcept
     {
         tt_axiom(gui_system_mutex.recurse_lock_count());
 
-        if (*enabled) {
-            drawContext.line_color = theme::global->labelStyle.color;
-        }
-
         ttlet &label_stencil = *value ? _on_label_stencil : _off_label_stencil;
-
-        label_stencil->draw(drawContext, true);
+        label_stencil->draw(draw_context, label_color());
     }
 };
 

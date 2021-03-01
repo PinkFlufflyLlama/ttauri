@@ -20,10 +20,12 @@ widget::widget(gui_window &_window, std::shared_ptr<abstract_container_widget> p
     }
 
     _enabled_callback = enabled.subscribe([this](auto...) {
-        window.request_redraw(window_clipping_rectangle());
+        ttlet lock = std::scoped_lock(gui_system_mutex);
+        window.request_redraw(aarect{this->local_to_window() * this->clipping_rectangle()});
     });
 
-    _preferred_size = {f32x4{0.0f, 0.0f}, f32x4{std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity()}};
+    _preferred_size = {
+        extent2{0.0f, 0.0f}, extent2{std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity()}};
 }
 
 widget::~widget() {}
@@ -51,45 +53,78 @@ void widget::update_layout(hires_utc_clock::time_point display_time_point, bool 
 
     need_layout |= std::exchange(_request_relayout, false);
     if (need_layout) {
-        window.request_redraw(window_clipping_rectangle());
-
-        // Used by draw().
-        _to_window_transform = translate3(_window_rectangle.x(), _window_rectangle.y(), _draw_layer);
-
-        // Used by handle_event()
-        _from_window_transform = ~_to_window_transform;
+        window.request_redraw(aarect{_local_to_window * _clipping_rectangle});
     }
 }
 
-draw_context widget::make_draw_context(draw_context context) const noexcept
+[[nodiscard]] color widget::background_color() const noexcept
 {
-    tt_axiom(gui_system_mutex.recurse_lock_count());
+    if (*enabled) {
+        if (_hover) {
+            return theme::global->fillColor(_semantic_layer + 1);
+        } else {
+            return theme::global->fillColor(_semantic_layer);
+        }
+    } else {
+        return theme::global->fillColor(_semantic_layer - 1);
+    }
+}
 
-    context.clipping_rectangle = _window_clipping_rectangle;
-    context.transform = _to_window_transform;
+[[nodiscard]] color widget::foreground_color() const noexcept
+{
+    if (*enabled) {
+        if (_hover) {
+            return theme::global->borderColor(_semantic_layer + 1);
+        } else {
+            return theme::global->borderColor(_semantic_layer);
+        }
+    } else {
+        return theme::global->borderColor(_semantic_layer - 1);
+    }
+}
 
-    // The default fill and border colors.
-    context.line_color = theme::global->borderColor(_semantic_layer);
-    context.fill_color = theme::global->fillColor(_semantic_layer);
-
+[[nodiscard]] color widget::focus_color() const noexcept
+{
     if (*enabled) {
         if (_focus && window.active) {
-            context.line_color = theme::global->accentColor;
+            return theme::global->accentColor;
         } else if (_hover) {
-            context.line_color = theme::global->borderColor(_semantic_layer + 1);
+            return theme::global->borderColor(_semantic_layer + 1);
+        } else {
+            return theme::global->borderColor(_semantic_layer);
         }
-
-        if (_hover) {
-            context.fill_color = theme::global->fillColor(_semantic_layer + 1);
-        }
-
     } else {
-        // Disabled, only the outline is shown.
-        context.line_color = theme::global->borderColor(_semantic_layer - 1);
-        context.fill_color = theme::global->fillColor(_semantic_layer - 1);
+        return theme::global->borderColor(_semantic_layer - 1);
     }
+}
 
-    return context;
+[[nodiscard]] color widget::accent_color() const noexcept
+{
+    if (*enabled) {
+        if (window.active) {
+            return theme::global->accentColor;
+        } else {
+            return theme::global->borderColor(_semantic_layer);
+        }
+    } else {
+        return theme::global->borderColor(_semantic_layer - 1);
+    }
+}
+
+[[nodiscard]] color widget::label_color() const noexcept
+{
+    if (*enabled) {
+        return theme::global->labelStyle.color;
+    } else {
+        return theme::global->borderColor(_semantic_layer - 1);
+    }
+}
+
+draw_context widget::make_draw_context(draw_context const &parent_context) const noexcept
+{
+    tt_axiom(gui_system_mutex.recurse_lock_count());
+    return parent_context.make_child_context(_parent_to_local, _local_to_window, _clipping_rectangle);
+
 }
 
 bool widget::handle_event(command command) noexcept
@@ -100,22 +135,22 @@ bool widget::handle_event(command command) noexcept
         using enum tt::command;
     case gui_keyboard_enter:
         _focus = true;
-        window.request_redraw(window_clipping_rectangle());
+        window.request_redraw(aarect{_local_to_window * _clipping_rectangle});
         return true;
 
     case gui_keyboard_exit:
         _focus = false;
-        window.request_redraw(window_clipping_rectangle());
+        window.request_redraw(aarect{_local_to_window * _clipping_rectangle});
         return true;
 
     case gui_mouse_enter:
         _hover = true;
-        window.request_redraw(window_clipping_rectangle());
+        window.request_redraw(aarect{_local_to_window * _clipping_rectangle});
         return true;
 
     case gui_mouse_exit:
         _hover = false;
-        window.request_redraw(window_clipping_rectangle());
+        window.request_redraw(aarect{_local_to_window * _clipping_rectangle});
         return true;
 
     default:;

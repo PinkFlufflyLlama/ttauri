@@ -45,6 +45,9 @@ public:
         option_list(std::forward<OptionList>(option_list)),
         unknown_label(std::forward<UnknownLabel>(unknown_label))
     {
+        // Because the super class `abstract_container_widget` forces the same semantic layer
+        // as the a parent, we need to force it back as if this is a normal widget.
+        _semantic_layer = parent->semantic_layer() + 1;
     }
 
     ~selection_widget() {}
@@ -97,8 +100,7 @@ public:
             ttlet option_height = std::max(unknown_label_size.height(), _max_option_label_height) + theme::global->margin * 2.0f;
             ttlet chevron_width = theme::global->smallSize;
 
-            _preferred_size = interval_vec2::make_minimum(f32x4{chevron_width + option_width, option_height});
-            _preferred_base_line = relative_base_line{vertical_alignment::middle, 0.0f, 200.0f};
+            _preferred_size = interval_extent2::make_minimum(extent2{chevron_width + option_width, option_height});
             return true;
 
         } else {
@@ -123,11 +125,15 @@ public:
                 ttlet overlay_width =
                     clamp(rectangle().width() - theme::global->smallSize, _overlay_widget->preferred_size().width());
                 ttlet overlay_height = _overlay_widget->preferred_size().maximum().height();
-                ttlet overlay_x = _window_rectangle.x() + theme::global->smallSize;
-                ttlet overlay_y = std::round(_window_rectangle.middle() - overlay_height * 0.5f);
-                ttlet overlay_rectangle = aarect{overlay_x, overlay_y, overlay_width, overlay_height};
+                ttlet overlay_x = theme::global->smallSize;
+                ttlet overlay_y = std::round(_size.height() * 0.5f - overlay_height * 0.5f);
+                ttlet overlay_rectangle_request = aarect{overlay_x, overlay_y, overlay_width, overlay_height};
 
-                _overlay_widget->set_layout_parameters(overlay_rectangle, overlay_rectangle);
+                ttlet overlay_rectangle = _overlay_widget->make_overlay_rectangle_from_parent(overlay_rectangle_request);
+                ttlet overlay_clipping_rectangle = expand(overlay_rectangle, _overlay_widget->margin());
+
+                _overlay_widget->set_layout_parameters_from_parent(
+                    overlay_rectangle, overlay_clipping_rectangle, _overlay_widget->draw_layer() - _draw_layer);
             }
         }
 
@@ -156,7 +162,7 @@ public:
     {
         tt_axiom(gui_system_mutex.recurse_lock_count());
 
-        if (overlaps(context, this->window_clipping_rectangle())) {
+        if (overlaps(context, this->_clipping_rectangle)) {
             draw_outline(context);
             draw_left_box(context);
             draw_chevrons(context);
@@ -176,7 +182,7 @@ public:
         if (event.cause.leftButton) {
             handled = true;
             if (*enabled) {
-                if (event.type == mouse_event::Type::ButtonUp && _window_rectangle.contains(event.position)) {
+                if (event.type == mouse_event::Type::ButtonUp && rectangle().contains(event.position)) {
                     handle_event(command::gui_activate);
                 }
             }
@@ -214,18 +220,17 @@ public:
         return super::handle_event(command);
     }
 
-    [[nodiscard]] hit_box hitbox_test(f32x4 window_position) const noexcept override
+    [[nodiscard]] hit_box hitbox_test(point2 position) const noexcept override
     {
         ttlet lock = std::scoped_lock(gui_system_mutex);
-        ttlet position = _from_window_transform * window_position;
 
         auto r = hit_box{};
 
         if (_selecting) {
-            r = super::hitbox_test(window_position);
+            r = super::hitbox_test(position);
         }
 
-        if (window_clipping_rectangle().contains(window_position)) {
+        if (rectangle().contains(position)) {
             r = std::max(r, hit_box{weak_from_this(), _draw_layer, *enabled ? hit_box::Type::Button : hit_box::Type::Default});
         }
 
@@ -260,6 +265,14 @@ public:
         tt_no_default();
     }
 
+    [[nodiscard]] color focus_color() const noexcept override
+    {
+        if (*enabled && _selecting) {
+            return theme::global->accentColor;
+        } else {
+            return super::focus_color();
+        }
+    }
 
 private:
     typename decltype(unknown_label)::callback_ptr_type _unknown_label_callback;
@@ -319,8 +332,8 @@ private:
     void stop_selecting() noexcept
     {
         _selecting = false;
-        window.request_redraw(_overlay_widget->window_rectangle());
-        window.request_redraw(window_rectangle());
+        window.request_redraw(aarect{_overlay_widget->local_to_window() * _overlay_widget->clipping_rectangle()});
+        window.request_redraw(aarect{_local_to_window * _clipping_rectangle});
     }
 
     /** Populate the scroll view with menu items corresponding to the options.
@@ -365,39 +378,29 @@ private:
     {
         tt_axiom(gui_system_mutex.recurse_lock_count());
 
-        context.corner_shapes = f32x4::broadcast(theme::global->roundingRadius);
-        context.draw_box_with_border_inside(rectangle());
+        context.draw_box_with_border_inside(
+            rectangle(), background_color(), focus_color(), corner_shapes{theme::global->roundingRadius});
     }
 
     void draw_left_box(draw_context context) noexcept
     {
         tt_axiom(gui_system_mutex.recurse_lock_count());
 
-        context.transform = translate3{0.0, 0.0, 0.1f} * context.transform;
-        if (_selecting) {
-            context.line_color = theme::global->accentColor;
-        }
-        context.fill_color = context.line_color;
-        context.corner_shapes = f32x4{theme::global->roundingRadius, 0.0f, theme::global->roundingRadius, 0.0f};
-        context.draw_box_with_border_inside(_left_box_rectangle);
+        ttlet corner_shapes = tt::corner_shapes{theme::global->roundingRadius, 0.0f, theme::global->roundingRadius, 0.0f};
+        context.draw_box(translate_z(0.1f) * _left_box_rectangle, focus_color(), corner_shapes);
     }
 
     void draw_chevrons(draw_context context) noexcept
     {
         tt_axiom(gui_system_mutex.recurse_lock_count());
 
-        context.transform = translate3{0.0, 0.0, 0.2f} * context.transform;
-        context.line_color = *enabled ? theme::global->foregroundColor : context.fill_color;
-        context.draw_glyph(_chevrons_glyph, _chevrons_rectangle);
+        context.draw_glyph(_chevrons_glyph, translate_z(0.2f) * _chevrons_rectangle, label_color());
     }
 
     void draw_value(draw_context context) noexcept
     {
         tt_axiom(gui_system_mutex.recurse_lock_count());
-
-        context.transform = translate3{0.0, 0.0, 0.1f} * context.transform;
-        context.line_color = *enabled ? _text_stencil_color : context.line_color;
-        _text_stencil->draw(context, true);
+        _text_stencil->draw(context, label_color(), translate_z(0.1f));
     }
 };
 

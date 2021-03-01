@@ -29,12 +29,12 @@ window_traffic_lights_widget::update_constraints(hires_utc_clock::time_point dis
         if constexpr (theme::global->operatingSystem == OperatingSystem::Windows) {
             ttlet width = theme::global->toolbarDecorationButtonWidth * 3.0f;
             ttlet height = theme::global->toolbarHeight;
-            _preferred_size = {f32x4{width, height}, f32x4{width, std::numeric_limits<float>::infinity()}};
+            _preferred_size = {extent2{width, height}, extent2{width, std::numeric_limits<float>::infinity()}};
 
         } else if constexpr (theme::global->operatingSystem == OperatingSystem::MacOS) {
             ttlet width = DIAMETER * 3.0f + 2.0f * MARGIN + 2.0f * SPACING;
             ttlet height = DIAMETER + 2.0f * MARGIN;
-            _preferred_size = {f32x4{width, height}, f32x4{width, std::numeric_limits<float>::infinity()}};
+            _preferred_size = {extent2{width, height}, extent2{width, std::numeric_limits<float>::infinity()}};
 
         } else {
             tt_no_default();
@@ -54,7 +54,7 @@ window_traffic_lights_widget::update_layout(hires_utc_clock::time_point display_
     if (need_layout) {
         auto extent = rectangle().extent();
         if (extent.height() > theme::global->toolbarHeight * 1.2f) {
-            extent = f32x4{extent.width(), theme::global->toolbarHeight};
+            extent = extent2{extent.width(), theme::global->toolbarHeight};
         }
         auto y = rectangle().height() - extent.height();
 
@@ -111,56 +111,38 @@ window_traffic_lights_widget::update_layout(hires_utc_clock::time_point display_
     super::update_layout(display_time_point, need_layout);
 }
 
-void window_traffic_lights_widget::drawMacOS(draw_context const &drawContext, hires_utc_clock::time_point displayTimePoint) noexcept
+void window_traffic_lights_widget::drawMacOS(
+    draw_context const &drawContext,
+    hires_utc_clock::time_point displayTimePoint) noexcept
 {
     tt_axiom(gui_system_mutex.recurse_lock_count());
 
     auto context = drawContext;
-    context.corner_shapes = f32x4{RADIUS, RADIUS, RADIUS, RADIUS};
 
-    if (!window.active && !_hover) {
-        context.fill_color = color(0.246f, 0.246f, 0.246f);
-    } else if (pressedClose) {
-        context.fill_color = color(1.0f, 0.242f, 0.212f);
-    } else {
-        context.fill_color = color(1.0f, 0.1f, 0.082f);
-    }
-    context.line_color = context.fill_color;
-    context.draw_box_with_border_inside(closeRectangle);
+    ttlet close_circle_color = (!window.active && !_hover) ? color(0.246f, 0.246f, 0.246f) :
+        pressedClose                                       ? color(1.0f, 0.242f, 0.212f) :
+                                                             color(1.0f, 0.1f, 0.082f);
+    context.draw_box(closeRectangle, close_circle_color, corner_shapes{RADIUS});
 
-    if (!window.active && !_hover) {
-        context.fill_color = color(0.246f, 0.246f, 0.246f);
-    } else if (pressedMinimize) {
-        context.fill_color = color(1.0f, 0.847f, 0.093f);
-    } else {
-        context.fill_color = color(0.784f, 0.521f, 0.021f);
-    }
-    context.line_color = context.fill_color;
-    context.draw_box_with_border_inside(minimizeRectangle);
+    ttlet minimize_circle_color = (!window.active && !_hover) ? color(0.246f, 0.246f, 0.246f) :
+        pressedMinimize                                       ? color(1.0f, 0.847f, 0.093f) :
+                                                                color(0.784f, 0.521f, 0.021f);
+    context.draw_box(minimizeRectangle, minimize_circle_color, corner_shapes{RADIUS});
 
-    if (!window.active && !_hover) {
-        context.fill_color = color(0.246f, 0.246f, 0.246f);
-    } else if (pressedMaximize) {
-        context.fill_color = color(0.223f, 0.863f, 0.1f);
-    } else {
-        context.fill_color = color(0.082f, 0.533f, 0.024f);
-    }
-    context.line_color = context.fill_color;
-    context.draw_box_with_border_inside(maximizeRectangle);
+    ttlet maximize_circle_color = (!window.active && !_hover) ? color(0.246f, 0.246f, 0.246f) :
+        pressedMaximize                                       ? color(0.223f, 0.863f, 0.1f) :
+                                                                color(0.082f, 0.533f, 0.024f);
+
+    context.draw_box(maximizeRectangle, maximize_circle_color, corner_shapes{RADIUS});
 
     if (_hover) {
-        context.transform = translate3{0.0f, 0.0f, 0.1f} * context.transform;
-        context.line_color = color(0.319f, 0.0f, 0.0f);
-        context.draw_glyph(closeWindowGlyph, closeWindowGlyphRectangle);
+        context.draw_glyph(closeWindowGlyph, translate_z(0.1f) * closeWindowGlyphRectangle, color{0.319f, 0.0f, 0.0f});
+        context.draw_glyph(minimizeWindowGlyph, translate_z(0.1f) * minimizeWindowGlyphRectangle, color{0.212f, 0.1f, 0.0f});
 
-        context.line_color = color(0.212f, 0.1f, 0.0f);
-        context.draw_glyph(minimizeWindowGlyph, minimizeWindowGlyphRectangle);
-
-        context.line_color = color(0.0f, 0.133f, 0.0f);
         if (window.size_state == gui_window_size::maximized) {
-            context.draw_glyph(restoreWindowGlyph, restoreWindowGlyphRectangle);
+            context.draw_glyph(restoreWindowGlyph, translate_z(0.1f) * restoreWindowGlyphRectangle, color{0.0f, 0.133f, 0.0f});
         } else {
-            context.draw_glyph(maximizeWindowGlyph, maximizeWindowGlyphRectangle);
+            context.draw_glyph(maximizeWindowGlyph, translate_z(0.1f) * maximizeWindowGlyphRectangle, color{0.0f, 0.133f, 0.0f});
         }
     }
 }
@@ -174,44 +156,37 @@ void window_traffic_lights_widget::drawWindows(
     auto context = drawContext;
 
     if (pressedClose) {
-        context.fill_color = color(1.0f, 0.0f, 0.0f);
+        context.draw_filled_quad(closeRectangle, color{1.0f, 0.0f, 0.0f});
     } else if (hoverClose) {
-        context.fill_color = color(0.5f, 0.0f, 0.0f);
+        context.draw_filled_quad(closeRectangle, color{0.5f, 0.0f, 0.0f});
     } else {
-        context.fill_color = theme::global->fillColor(_semantic_layer);
+        context.draw_filled_quad(closeRectangle, theme::global->fillColor(_semantic_layer));
     }
-    context.draw_filled_quad(closeRectangle);
 
     if (pressedMinimize) {
-        context.fill_color = theme::global->fillColor(_semantic_layer + 2);
+        context.draw_filled_quad(minimizeRectangle, theme::global->fillColor(_semantic_layer + 2));
     } else if (hoverMinimize) {
-        context.fill_color = theme::global->fillColor(_semantic_layer + 1);
+        context.draw_filled_quad(minimizeRectangle, theme::global->fillColor(_semantic_layer + 1));
     } else {
-        context.fill_color = theme::global->fillColor(_semantic_layer);
+        context.draw_filled_quad(minimizeRectangle, theme::global->fillColor(_semantic_layer));
     }
-    context.draw_filled_quad(minimizeRectangle);
 
     if (pressedMaximize) {
-        context.fill_color = theme::global->fillColor(_semantic_layer + 2);
+        context.draw_filled_quad(maximizeRectangle, theme::global->fillColor(_semantic_layer + 2));
     } else if (hoverMaximize) {
-        context.fill_color = theme::global->fillColor(_semantic_layer + 1);
+        context.draw_filled_quad(maximizeRectangle, theme::global->fillColor(_semantic_layer + 1));
     } else {
-        context.fill_color = theme::global->fillColor(_semantic_layer);
+        context.draw_filled_quad(maximizeRectangle, theme::global->fillColor(_semantic_layer));
     }
-    context.draw_filled_quad(maximizeRectangle);
 
-    if (window.active) {
-        context.line_color = theme::global->foregroundColor;
-    } else {
-        context.line_color = theme::global->borderColor(_semantic_layer);
-    }
-    context.transform = translate3{0.0f, 0.0f, 0.1f} * context.transform;
-    context.draw_glyph(closeWindowGlyph, closeWindowGlyphRectangle);
-    context.draw_glyph(minimizeWindowGlyph, minimizeWindowGlyphRectangle);
+    ttlet glyph_color = window.active ? label_color() : foreground_color();
+
+    context.draw_glyph(closeWindowGlyph, translate_z(0.1f) * closeWindowGlyphRectangle, glyph_color);
+    context.draw_glyph(minimizeWindowGlyph, translate_z(0.1f) * minimizeWindowGlyphRectangle, glyph_color);
     if (window.size_state == gui_window_size::maximized) {
-        context.draw_glyph(restoreWindowGlyph, restoreWindowGlyphRectangle);
+        context.draw_glyph(restoreWindowGlyph, translate_z(0.1f) * restoreWindowGlyphRectangle, glyph_color);
     } else {
-        context.draw_glyph(maximizeWindowGlyph, maximizeWindowGlyphRectangle);
+        context.draw_glyph(maximizeWindowGlyph, translate_z(0.1f) * maximizeWindowGlyphRectangle, glyph_color);
     }
 }
 
@@ -219,7 +194,7 @@ void window_traffic_lights_widget::draw(draw_context context, hires_utc_clock::t
 {
     tt_axiom(gui_system_mutex.recurse_lock_count());
 
-    if (overlaps(context, this->window_clipping_rectangle())) {
+    if (overlaps(context, _clipping_rectangle)) {
         if constexpr (theme::global->operatingSystem == OperatingSystem::MacOS) {
             drawMacOS(context, display_time_point);
 
@@ -241,12 +216,11 @@ bool window_traffic_lights_widget::handle_event(mouse_event const &event) noexce
 
     // Check the hover states of each button.
     auto stateHasChanged = false;
-    ttlet position = _from_window_transform * event.position;
-    stateHasChanged |= compare_then_assign(hoverClose, closeRectangle.contains(position));
-    stateHasChanged |= compare_then_assign(hoverMinimize, minimizeRectangle.contains(position));
-    stateHasChanged |= compare_then_assign(hoverMaximize, maximizeRectangle.contains(position));
+    stateHasChanged |= compare_then_assign(hoverClose, closeRectangle.contains(event.position));
+    stateHasChanged |= compare_then_assign(hoverMinimize, minimizeRectangle.contains(event.position));
+    stateHasChanged |= compare_then_assign(hoverMaximize, maximizeRectangle.contains(event.position));
     if (stateHasChanged) {
-        window.request_redraw(window_clipping_rectangle());
+        window.request_redraw(aarect{_local_to_window * _clipping_rectangle});
     }
 
     if (event.cause.leftButton) {
@@ -271,14 +245,14 @@ bool window_traffic_lights_widget::handle_event(mouse_event const &event) noexce
                 }
             }
 
-            window.request_redraw(window_clipping_rectangle());
+            window.request_redraw(aarect{_local_to_window * _clipping_rectangle});
             pressedClose = false;
             pressedMinimize = false;
             pressedMaximize = false;
             break;
 
         case ButtonDown:
-            window.request_redraw(window_clipping_rectangle());
+            window.request_redraw(aarect{_local_to_window * _clipping_rectangle});
             pressedClose = hoverClose;
             pressedMinimize = hoverMinimize;
             pressedMaximize = hoverMaximize;
@@ -289,12 +263,11 @@ bool window_traffic_lights_widget::handle_event(mouse_event const &event) noexce
     return handled;
 }
 
-hit_box window_traffic_lights_widget::hitbox_test(f32x4 window_position) const noexcept
+hit_box window_traffic_lights_widget::hitbox_test(point2 position) const noexcept
 {
     ttlet lock = std::scoped_lock(gui_system_mutex);
-    ttlet position = _from_window_transform * window_position;
 
-    if (_window_clipping_rectangle.contains(window_position)) {
+    if (rectangle().contains(position)) {
         if (closeRectangle.contains(position) || minimizeRectangle.contains(position) || maximizeRectangle.contains(position)) {
             return hit_box{weak_from_this(), _draw_layer, hit_box::Type::Button};
         } else {
