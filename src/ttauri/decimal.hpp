@@ -543,20 +543,27 @@ private:
 
     [[nodiscard]] constexpr std::pair<int, long long> to_exponent_mantissa(std::string_view str)
     {
-        std::string mantissa_str;
+        // TODO: verify functionality
+        // TODO: write tests
+        // TODO: remove commented out code
+        
+        //std::string mantissa_str;
+        long long mantissa;
 
         int nr_digits = 0;
         int nr_digits_in_front_of_point = -1;
         for (ttlet c : str) {
             if (c >= '0' && c <= '9') {
-                mantissa_str += c;
+                int digit = (int)c - 48;
+                mantissa += digit * (nr_digits + 1);
+                //mantissa_str += c;
                 nr_digits++;
             } else if (c == '.') {
                 nr_digits_in_front_of_point = nr_digits;
             } else if (c == '\'' || c == ',') {
                 // Ignore thousand separators.
             } else if (c == '-') {
-                mantissa_str += c;
+                //mantissa_str += c;
             } else {
                 throw parse_error("Unexpected character in decimal number '{}'", str);
             }
@@ -564,17 +571,17 @@ private:
 
         int exponent = (nr_digits_in_front_of_point >= 0) ? (nr_digits_in_front_of_point - nr_digits) : 0;
 
-        auto first = mantissa_str.data();
-        auto last = first + mantissa_str.size();
-        long long mantissa;
-        auto result = std::from_chars(first, last, mantissa, 10);
-        if (result.ptr == first) {
-            throw parse_error("Could not parse mantissa '{}'", mantissa_str);
-        } else if (result.ec == std::errc::result_out_of_range) {
-            throw parse_error("Mantissa '{}' out of range ", mantissa_str);
-        } else {
+        //auto first = mantissa_str.data();
+        //auto last = first + mantissa_str.size();
+        //long long mantissa;
+        //auto result = std::from_chars(first, last, mantissa, 10);
+        //if (result.ptr == first) {
+        //    throw parse_error("Could not parse mantissa '{}'", mantissa_str);
+        //} else if (result.ec == std::errc::result_out_of_range) {
+        //    throw parse_error("Mantissa '{}' out of range ", mantissa_str);
+        //} else {
             return {exponent, mantissa};
-        }
+        //}
     }
 };
 
