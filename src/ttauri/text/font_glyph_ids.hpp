@@ -10,6 +10,8 @@
 #include "../tagged_id.hpp"
 #include "../aarect.hpp"
 #include <tuple>
+#include <array>
+#include <functional>
 
 namespace tt {
 struct graphic_path;
