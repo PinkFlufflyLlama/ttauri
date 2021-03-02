@@ -12,6 +12,11 @@
 #include "static_resource_view.hpp"
 #include "logger.hpp"
 #include <regex>
+#include <bit>
+#include <string>
+#include <string_view>
+#include <functional>
+#include <memory>
 
 namespace tt {
 
