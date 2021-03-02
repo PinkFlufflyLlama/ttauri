@@ -1,5 +1,8 @@
+// Copyright Caleb Owens 2021.
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
 /*
-  This is the bit_cast implementation from the cppreference website.
+  This is the bit_cast implementation bassed of the example in the cppreference website.
   https://en.cppreference.com/w/cpp/numeric/bit_cast
 */
 

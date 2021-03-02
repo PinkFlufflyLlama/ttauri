@@ -1,4 +1,7 @@
-// This is the bit_ceil implementation from cppreference as the std::bit_ceil that is use in gnu gcc is not a constexpr
+// Copyright Caleb Owens 2021.
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+// This is the bit_ceil implementation based of the one in cppreference as the std::bit_ceil that is use in gnu gcc is not a constexpr
 // TODO: write tests for this function
 
 #include <concepts>
