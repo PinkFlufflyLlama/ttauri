@@ -8,6 +8,7 @@
 #include "../cast.hpp"
 #include "../hash.hpp"
 #include <array>
+#include <string_view>
 
 namespace tt {
 
