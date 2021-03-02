@@ -13,7 +13,7 @@ namespace tt {
 /** Combined font_id + grapheme for use as a key in a std::unordered_map.
  */
 struct font_grapheme_id {
-    font_id font_id;
+    tt::font_id font_id;
     grapheme g;
 
     [[nodiscard]] size_t hash() const noexcept {

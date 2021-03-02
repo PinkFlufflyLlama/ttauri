@@ -27,7 +27,7 @@ public:
 
     using const_iterator = recursive_iterator<std::vector<attributed_glyph_line>::const_iterator>;
 
-    alignment alignment;
+    tt::alignment alignment;
     aarect boundingBox;
     float width;
     extent2 preferred_extent;

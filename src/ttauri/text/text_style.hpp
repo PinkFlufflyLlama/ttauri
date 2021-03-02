@@ -20,7 +20,7 @@ struct text_style {
     font_family_id family_id;
     font_variant variant;
     float size;
-    color color;
+    tt::color color;
     text_decoration decoration;
 
     text_style() noexcept :
