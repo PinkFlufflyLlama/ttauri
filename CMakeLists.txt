@@ -71,7 +71,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 include(AddStaticResource)
 include(AddShader)
 include(AddStaticResource)
-include(Versioning)
+# include(Versioning)
 
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW) # for gtest_force_shared_crt
 add_subdirectory(external)
@@ -90,7 +90,11 @@ target_include_directories(ttauri PUBLIC ${Vulkan_INCLUDE_DIRS})
 target_include_directories(ttauri PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_include_directories(ttauri PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/src)
 target_include_directories(ttauri PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_compile_features(ttauri PUBLIC cxx_std_20)
+set_target_properties(ttauri PROPERTIES
+    CXX_STANDARD 20
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+)
 
 add_custom_command(
   TARGET ttauri POST_BUILD
@@ -135,6 +139,8 @@ elseif (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
     # Steamroller 0x15-v3: BMI, TBM, F16C, FMA, FMA4, FSGSBASE, AVX, XOP, LWP, AES, PCLMUL, CX16, MMX, SSE, SSE2, SSE3, SSE4A, SSSE3, SSE4.1, SSE4.2, ABM 
     # POPCNT is supported by Steamroller through he SSE4A instruction set.
     target_compile_options(ttauri PUBLIC -mf16c -mfsgsbase -mavx -maes -mpclmul -mmmx -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt)
+
+    target_compile_options(ttauri PUBLIC -fpermissive)
 
 elseif (MSVC)
     # Turn on a lot of warnings by default.
