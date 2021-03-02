@@ -11,7 +11,7 @@
 
 namespace tt {
 
-enum class font_weight {
+enum font_weight {
     Thin,       ///< 100: Thin / Hairline
     ExtraLight, ///< 200: Ultra-light / Extra-light
     Light,      ///< 300: Light
