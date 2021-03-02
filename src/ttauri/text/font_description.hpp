@@ -11,6 +11,8 @@
 #include "../exception.hpp"
 #include "../required.hpp"
 
+#include <string>
+
 namespace tt {
 
 struct font_description {
