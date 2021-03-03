@@ -9,7 +9,7 @@
       "cmakeCommandArgs": "-DCMAKE_VERBOSE_MAKEFILE=ON -DVCPKG_TARGET_TRIPLET=x64-windows-static -DBUILD_SHARED_LIBS=OFF",
       "buildCommandArgs": "",
       "ctestCommandArgs": "-C Debug",
-      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "inheritEnvironments": ["msvc_x64_x64"],
       "variables": [
         {
           "name": "TT_ENABLE_ANALYSIS",
@@ -27,7 +27,7 @@
       "cmakeCommandArgs": "-DCMAKE_VERBOSE_MAKEFILE=ON -DVCPKG_TARGET_TRIPLET=x64-windows-static -DBUILD_SHARED_LIBS=OFF",
       "buildCommandArgs": "",
       "ctestCommandArgs": "-C Debug",
-      "inheritEnvironments": [ "msvc_x64_x64" ]
+      "inheritEnvironments": ["msvc_x64_x64"]
     },
     {
       "name": "x64-MSVC-Release",
@@ -38,7 +38,29 @@
       "cmakeCommandArgs": "-DCMAKE_VERBOSE_MAKEFILE=ON -DVCPKG_TARGET_TRIPLET=x64-windows-static -DBUILD_SHARED_LIBS=OFF",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x64_x64" ]
+      "inheritEnvironments": ["msvc_x64_x64"]
+    },
+    {
+      "name": "x64-GCC-linux-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "buildRoot": "${env.USERPROFILE}\\CMakeBuilds\\${workspaceHash}\\build\\${name}",
+      "installRoot": "${env.USERPROFILE}\\CMakeBuilds\\${workspaceHash}\\install\\${name}",
+      "cmakeCommandArgs": "-DCMAKE_VERBOSE_MAKEFILE=ON -DVCPKG_TARGET_TRIPLET=x64-linux-static -DBUILD_SHARED_LIBS=OFF",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": "-C Debug",
+      "inheritEnvironments": ["linux_x64"]
+    },
+    {
+      "name": "x64-GCC-linux-Release",
+      "generator": "Ninja",
+      "configurationType": "Release",
+      "buildRoot": "${env.USERPROFILE}\\CMakeBuilds\\${workspaceHash}\\build\\${name}",
+      "installRoot": "${env.USERPROFILE}\\CMakeBuilds\\${workspaceHash}\\install\\${name}",
+      "cmakeCommandArgs": "-DCMAKE_VERBOSE_MAKEFILE=ON -DVCPKG_TARGET_TRIPLET=x64-linux-static -DBUILD_SHARED_LIBS=OFF",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": "",
+      "inheritEnvironments": ["linux_x64"]
     },
 
     {
@@ -50,7 +72,7 @@
       "cmakeCommandArgs": "-DCMAKE_VERBOSE_MAKEFILE=ON -DVCPKG_TARGET_TRIPLET=x64-windows-static -DBUILD_SHARED_LIBS=OFF",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x64_x64" ]
+      "inheritEnvironments": ["msvc_x64_x64"]
     },
     {
       "name": "x64-Clang-Debug",
@@ -62,7 +84,7 @@
       "buildCommandArgs": "",
       "ctestCommandArgs": "-C Debug",
       "intelliSenseMode": "windows-clang-x64",
-      "inheritEnvironments": [ "clang_cl_x64" ]
+      "inheritEnvironments": ["clang_cl_x64"]
     },
     {
       "name": "x64-Clang-Release",
@@ -73,7 +95,7 @@
       "cmakeCommandArgs": "-DCMAKE_VERBOSE_MAKEFILE=ON -DVCPKG_TARGET_TRIPLET=x64-windows-static -DBUILD_SHARED_LIBS=OFF",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "clang_cl_x64" ]
+      "inheritEnvironments": ["clang_cl_x64"]
     },
     {
       "name": "x64-Clang-ReleaseWithDebugInfo",
@@ -84,7 +106,7 @@
       "cmakeCommandArgs": "-DCMAKE_VERBOSE_MAKEFILE=ON -DVCPKG_TARGET_TRIPLET=x64-windows-static -DBUILD_SHARED_LIBS=OFF",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "clang_cl_x64" ]
+      "inheritEnvironments": ["clang_cl_x64"]
     }
   ]
 }
