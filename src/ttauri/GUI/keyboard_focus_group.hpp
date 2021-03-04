@@ -32,22 +32,20 @@ enum class keyboard_focus_group {
     any,
 };
 
+// TODO: replace back with using enum
 [[nodiscard]] constexpr bool is_normal(keyboard_focus_group group) noexcept
 {
-    using enum keyboard_focus_group;
-    return group == normal || group == any;
+    return group == keyboard_focus_group::normal || group == keyboard_focus_group::any;
 }
 
 [[nodiscard]] constexpr bool is_menu(keyboard_focus_group group) noexcept
 {
-    using enum keyboard_focus_group;
-    return group == menu || group == any;
+    return group == keyboard_focus_group::menu || group == keyboard_focus_group::any;
 }
 
 [[nodiscard]] constexpr bool is_toolbar(keyboard_focus_group group) noexcept
 {
-    using enum keyboard_focus_group;
-    return group == toolbar || group == any;
+    return group == keyboard_focus_group::toolbar || group == keyboard_focus_group::any;
 }
 
 }
