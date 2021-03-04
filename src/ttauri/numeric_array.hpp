@@ -1651,6 +1651,15 @@ template<ssize_t Mask, arithmetic T, ssize_t N>
 template<ssize_t Mask, arithmetic T, ssize_t N>
 [[nodiscard]] constexpr T rcp_hypot(numeric_array<T, N> const &rhs);
 
+template<size_t Mask = ~size_t{0}, arithmetic T, ssize_t N>
+[[nodiscard]] constexpr numeric_array<T, N> neg(numeric_array<T, N> rhs) noexcept;
+
+template<ssize_t Mask, arithmetic T, ssize_t N>
+[[nodiscard]] constexpr T squared_hypot(numeric_array<T, N> const &rhs) noexcept;
+
+template<ssize_t Mask, arithmetic T, ssize_t N>
+[[nodiscard]] constexpr numeric_array<T, N> normalize(numeric_array<T, N> const &rhs) noexcept;
+
 #endif
 
 } // namespace tt
