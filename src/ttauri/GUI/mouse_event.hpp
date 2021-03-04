@@ -83,15 +83,15 @@ struct mouse_event {
     friend std::string to_string(mouse_event const &rhs) noexcept {
         char const *type_s;
         switch (rhs.type) {
-        using enum mouse_event::Type;
-        case None: type_s = "none"; break;
-        case Entered: type_s = "entered"; break;
-        case Exited: type_s = "exited"; break;
-        case Move: type_s = "move"; break;
-        case Drag: type_s = "drag"; break;
-        case ButtonDown: type_s = "down"; break;
-        case ButtonUp: type_s = "up"; break;
-        case Wheel: type_s = "wheel"; break;
+        // TODO: change back to using namespace when its added to GCC
+        case mouse_event::Type::None: type_s = "none"; break;
+        case mouse_event::Type::Entered: type_s = "entered"; break;
+        case mouse_event::Type::Exited: type_s = "exited"; break;
+        case mouse_event::Type::Move: type_s = "move"; break;
+        case mouse_event::Type::Drag: type_s = "drag"; break;
+        case mouse_event::Type::ButtonDown: type_s = "down"; break;
+        case mouse_event::Type::ButtonUp: type_s = "up"; break;
+        case mouse_event::Type::Wheel: type_s = "wheel"; break;
         default: tt_no_default();
         }
 
