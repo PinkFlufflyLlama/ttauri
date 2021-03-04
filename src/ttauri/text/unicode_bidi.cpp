@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <iterator>
 
+// TODO: Use using enum when added to GCC
+
 namespace tt::detail {
 
 [[nodiscard]] static unicode_bidi_class unicode_bidi_P2(
