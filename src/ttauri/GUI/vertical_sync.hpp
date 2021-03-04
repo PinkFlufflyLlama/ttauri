@@ -18,6 +18,13 @@ namespace tt {
 using vertical_sync = vertical_sync_macos;
 }
 
+#elif  TT_OPERATING_SYSTEM == TT_OS_LINUX
+// TODO: implement vsync for linux
+#include "vertical_sync_base.hpp"
+namespace tt {
+using vertical_sync = vertical_sync_base;
+}
+
 #else
 #error "vertical_sync not implemented for os"
 #endif
