@@ -1632,6 +1632,27 @@ using f64x2 = numeric_array<double, 2>;
 using f64x4 = numeric_array<double, 4>;
 using f64x8 = numeric_array<double, 8>;
 
+// Declare friends
+// TODO: Remove when hidden friends do actulally get discorered by ADL - check when GCC11 is out
+#if __GNUC__
+
+template<ssize_t I, arithmetic T, ssize_t N>
+[[nodiscard]] constexpr T &get(numeric_array<T, N> &rhs) noexcept;
+
+template<ssize_t I, arithmetic T, ssize_t N>
+[[nodiscard]] constexpr T get(numeric_array<T, N> &&rhs) noexcept;
+
+template<ssize_t I, arithmetic T, ssize_t N>
+[[nodiscard]] constexpr T get(numeric_array<T, N> const &rhs) noexcept;
+
+template<ssize_t Mask, arithmetic T, ssize_t N>
+[[nodiscard]] constexpr T dot(numeric_array<T, N> const &lhs, numeric_array<T, N> const &rhs) noexcept;
+
+template<ssize_t Mask, arithmetic T, ssize_t N>
+[[nodiscard]] constexpr T rcp_hypot(numeric_array<T, N> const &rhs);
+
+#endif
+
 } // namespace tt
 
 namespace std {
