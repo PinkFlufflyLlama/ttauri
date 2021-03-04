@@ -108,7 +108,7 @@ public:
         }
     }
 
-    [[nodiscard]] void update_layout(hires_utc_clock::time_point display_time_point, bool need_layout) noexcept override
+    void update_layout(hires_utc_clock::time_point display_time_point, bool need_layout) noexcept override
     {
         tt_axiom(gui_system_mutex.recurse_lock_count());
 
@@ -259,8 +259,8 @@ public:
         }
     }
 
-    template<typename T, typename... Args>
-    std::shared_ptr<T> make_widget(Args &&...args)
+    template<typename F, typename... Args>
+    std::shared_ptr<F> make_widget(Args &&...args)
     {
         tt_no_default();
     }

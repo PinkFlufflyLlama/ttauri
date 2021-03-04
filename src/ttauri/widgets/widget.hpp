@@ -418,7 +418,7 @@ public:
      * @param display_time_point The time point when the widget will be shown on the screen.
      * @param need_layout Force the widget to layout
      */
-    [[nodiscard]] virtual void update_layout(hires_utc_clock::time_point display_time_point, bool need_layout) noexcept;
+    virtual void update_layout(hires_utc_clock::time_point display_time_point, bool need_layout) noexcept;
 
     virtual [[nodiscard]] color background_color() const noexcept;
 

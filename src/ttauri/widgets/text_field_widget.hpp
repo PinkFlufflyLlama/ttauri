@@ -331,13 +331,13 @@ public:
         if (*enabled) {
             switch (event.type) {
             // TODO: Use using enum when added to GCC
-            case keyboard_event::Typegrapheme:
+            case keyboard_event::Type::grapheme:
                 handled = true;
                 _field.insertgrapheme(event.grapheme);
                 commit(false);
                 break;
 
-            case keyboard_event::TypePartialgrapheme:
+            case keyboard_event::Type::Partialgrapheme:
                 handled = true;
                 _field.insertPartialgrapheme(event.grapheme);
                 commit(false);

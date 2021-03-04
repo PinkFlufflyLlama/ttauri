@@ -90,7 +90,7 @@ public:
         }
     }
 
-    [[nodiscard]] void update_layout(hires_utc_clock::time_point displayTimePoint, bool need_layout) noexcept override
+    void update_layout(hires_utc_clock::time_point displayTimePoint, bool need_layout) noexcept override
     {
         tt_axiom(gui_system_mutex.recurse_lock_count());
 
