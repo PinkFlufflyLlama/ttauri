@@ -123,13 +123,13 @@ public:
             handled = true;
 
             switch (event.type) {
-                using enum mouse_event::Type;
-            case ButtonDown:
+            // TODO: use using enum when compatible with GCC
+            case mouse_event::Type::ButtonDown:
                 // Record the original scroll-position before the drag starts.
                 offset_before_drag = *offset;
                 break;
 
-            case Drag: {
+            case mouse_event::Type::Drag: {
                 // The distance the slider has to move relative to the slider position at the
                 // start of the drag.
                 ttlet slider_movement = is_vertical ? event.delta().y() : event.delta().x();
