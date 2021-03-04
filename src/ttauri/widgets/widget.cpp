@@ -132,23 +132,23 @@ bool widget::handle_event(command command) noexcept
     tt_axiom(gui_system_mutex.recurse_lock_count());
 
     switch (command) {
-        using enum tt::command;
-    case gui_keyboard_enter:
+    // TODO: Use using enum when added to GCC
+    case tt::command::gui_keyboard_enter:
         _focus = true;
         window.request_redraw(aarect{_local_to_window * _clipping_rectangle});
         return true;
 
-    case gui_keyboard_exit:
+    case tt::command::gui_keyboard_exit:
         _focus = false;
         window.request_redraw(aarect{_local_to_window * _clipping_rectangle});
         return true;
 
-    case gui_mouse_enter:
+    case tt::command::gui_mouse_enter:
         _hover = true;
         window.request_redraw(aarect{_local_to_window * _clipping_rectangle});
         return true;
 
-    case gui_mouse_exit:
+    case tt::command::gui_mouse_exit:
         _hover = false;
         window.request_redraw(aarect{_local_to_window * _clipping_rectangle});
         return true;
