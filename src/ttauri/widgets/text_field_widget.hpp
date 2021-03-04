@@ -268,8 +268,8 @@ public:
             }
 
             switch (event.type) {
-                using enum mouse_event::Type;
-            case ButtonDown:
+            // TODO: Use using enum when added to GCC
+            case mouse_event::Type::ButtonDown:
                 if (_text_rectangle.contains(event.position)) {
                     ttlet mouseInTextPosition = _text_inv_translate * event.position;
 
@@ -293,7 +293,7 @@ public:
                 }
                 break;
 
-            case Drag:
+            case mouse_event::Type::Drag:
                 // When the mouse is dragged beyond the line input,
                 // start scrolling the text and select on the edge of the textRectangle.
                 if (event.position.x() > _text_rectangle.p3().x()) {
@@ -330,15 +330,14 @@ public:
 
         if (*enabled) {
             switch (event.type) {
-                using enum keyboard_event::Type;
-
-            case grapheme:
+            // TODO: Use using enum when added to GCC
+            case keyboard_event::Typegrapheme:
                 handled = true;
                 _field.insertgrapheme(event.grapheme);
                 commit(false);
                 break;
 
-            case Partialgrapheme:
+            case keyboard_event::TypePartialgrapheme:
                 handled = true;
                 _field.insertPartialgrapheme(event.grapheme);
                 commit(false);
