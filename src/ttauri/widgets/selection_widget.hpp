@@ -197,9 +197,9 @@ public:
 
         if (*enabled) {
             switch (command) {
-                using enum tt::command;
-            case gui_activate:
-            case gui_enter:
+            // TODO: Use using enum when added to GCC
+            case tt::command::gui_activate:
+            case tt::command::gui_enter:
                 if (!_selecting) {
                     start_selecting();
                 } else {
@@ -207,7 +207,7 @@ public:
                 }
                 return true;
 
-            case gui_escape:
+            case tt::command::gui_escape:
                 if (_selecting) {
                     stop_selecting();
                 }
