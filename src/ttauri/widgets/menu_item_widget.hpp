@@ -50,7 +50,7 @@ public:
     using super = abstract_button_widget<T>;
     using value_type = typename super::value_type;
 
-    observable<label> label;
+    observable<tt::label> label;
 
     template<typename Value = observable<value_type>>
     menu_item_widget(

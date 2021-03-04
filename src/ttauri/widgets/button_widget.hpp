@@ -21,7 +21,7 @@ public:
     using super = abstract_button_widget<T>;
     using value_type = T;
 
-    observable<label> label;
+    observable<tt::label> label;
 
     template<typename Value = observable<value_type>>
     button_widget(

@@ -21,7 +21,7 @@ class label_widget final : public widget {
 public:
     using super = widget;
 
-    observable<label> label;
+    observable<tt::label> label;
 
     template<typename Label>
     label_widget(

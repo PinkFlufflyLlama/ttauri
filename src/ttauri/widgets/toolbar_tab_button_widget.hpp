@@ -22,7 +22,7 @@ public:
     using super = abstract_radio_button_widget<T>;
     using value_type = super::value_type;
 
-    observable<label> label;
+    observable<tt::label> label;
 
     template<typename Value, typename Label = observable<tt::label>>
     toolbar_tab_button_widget(
