@@ -26,13 +26,13 @@ struct font_description {
     font_weight weight = font_weight::Regular;
     float optical_size = 12.0;
 
-    unicode_ranges unicode_ranges;
+    tt::unicode_ranges unicode_ranges;
 
     float xHeight = 0.0;
     float HHeight = 0.0;
     float DigitWidth = 0.0;
 
-    [[nodiscard]] font_variant font_variant() const noexcept {
+    [[nodiscard]] tt::font_variant font_variant() const noexcept {
         return {weight, italic};
     }
 

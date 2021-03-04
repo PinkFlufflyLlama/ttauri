@@ -106,7 +106,7 @@ private:
     struct fontEntry {
         URL url;
         font_description description;
-        mutable std::unique_ptr<font> font;
+        mutable std::unique_ptr<tt::font> font;
         std::vector<font_id> fallbacks;
 
         fontEntry(URL url, font_description description) noexcept :
