@@ -227,8 +227,8 @@ bool window_traffic_lights_widget::handle_event(mouse_event const &event) noexce
         handled = true;
 
         switch (event.type) {
-            using enum mouse_event::Type;
-        case ButtonUp:
+        // TODO: Use using enum when added to GCC
+        case mouse_event::Type::ButtonUp:
             if (pressedClose && hoverClose) {
                 window.close_window();
             }
@@ -251,7 +251,7 @@ bool window_traffic_lights_widget::handle_event(mouse_event const &event) noexce
             pressedMaximize = false;
             break;
 
-        case ButtonDown:
+        case mouse_event::Type::ButtonDown:
             window.request_redraw(aarect{_local_to_window * _clipping_rectangle});
             pressedClose = hoverClose;
             pressedMinimize = hoverMinimize;
