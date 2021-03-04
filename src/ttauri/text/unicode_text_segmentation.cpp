@@ -11,8 +11,7 @@ namespace tt {
 [[nodiscard]] static bool
 breaks_grapheme(unicode_grapheme_cluster_break cluster_break, grapheme_break_state &state) noexcept
 {
-    using enum unicode_grapheme_cluster_break;
-
+    // TODO: Use using enum when added to GCC
     ttlet lhs = state.previous;
     ttlet rhs = cluster_break;
 
@@ -31,9 +30,9 @@ breaks_grapheme(unicode_grapheme_cluster_break cluster_break, grapheme_break_sta
 
     state.first_character = false;
 
-    ttlet GB3 = (lhs == CR) && (rhs == LF);
-    ttlet GB4 = (lhs == Control) || (lhs == CR) || (lhs == LF);
-    ttlet GB5 = (rhs == Control) || (rhs == CR) || (rhs == LF);
+    ttlet GB3 = (lhs == unicode_grapheme_cluster_break::CR) && (rhs == unicode_grapheme_cluster_break::LF);
+    ttlet GB4 = (lhs == unicode_grapheme_cluster_break::Control) || (lhs == unicode_grapheme_cluster_break::CR) || (lhs == unicode_grapheme_cluster_break::LF);
+    ttlet GB5 = (rhs == unicode_grapheme_cluster_break::Control) || (rhs == unicode_grapheme_cluster_break::CR) || (rhs == unicode_grapheme_cluster_break::LF);
     if (break_state == break_state::unknown) {
         if (GB3) {
             break_state = break_state::dont_break;
@@ -42,42 +41,42 @@ breaks_grapheme(unicode_grapheme_cluster_break cluster_break, grapheme_break_sta
         }
     }
 
-    ttlet GB6 = (lhs == L) &&
-        ((rhs == L) || (rhs == V) ||
-         (rhs == LV) | (rhs == LVT));
-    ttlet GB7 = ((lhs == LV) || (lhs == V)) &&
-        ((rhs == V) || (rhs == T));
-    ttlet GB8 = ((lhs == LVT) || (lhs == T)) && (rhs == T);
+    ttlet GB6 = (lhs == unicode_grapheme_cluster_break::L) &&
+        ((rhs == unicode_grapheme_cluster_break::L) || (rhs == unicode_grapheme_cluster_break::V) ||
+         (rhs == unicode_grapheme_cluster_break::LV) | (rhs == unicode_grapheme_cluster_break::LVT));
+    ttlet GB7 = ((lhs == unicode_grapheme_cluster_break::LV) || (lhs == unicode_grapheme_cluster_break::V)) &&
+        ((rhs == unicode_grapheme_cluster_break::V) || (rhs == unicode_grapheme_cluster_break::T));
+    ttlet GB8 = ((lhs == unicode_grapheme_cluster_break::LVT) || (lhs == unicode_grapheme_cluster_break::T)) && (rhs == unicode_grapheme_cluster_break::T);
     if ((break_state == break_state::unknown) && (GB6 || GB7 || GB8)) {
         break_state = break_state::dont_break;
     }
 
-    ttlet GB9 = ((rhs == Extend) || (rhs == ZWJ));
-    ttlet GB9a = (rhs == SpacingMark);
-    ttlet GB9b = (lhs == Prepend);
+    ttlet GB9 = ((rhs == unicode_grapheme_cluster_break::Extend) || (rhs == unicode_grapheme_cluster_break::ZWJ));
+    ttlet GB9a = (rhs == unicode_grapheme_cluster_break::SpacingMark);
+    ttlet GB9b = (lhs == unicode_grapheme_cluster_break::Prepend);
     if ((break_state == break_state::unknown) & (GB9 || GB9a || GB9b)) {
         break_state = break_state::dont_break;
     }
 
     ttlet GB11 =
-        state.in_extended_pictograph && (lhs == ZWJ) && (rhs == Extended_Pictographic);
+        state.in_extended_pictograph && (lhs == unicode_grapheme_cluster_break::ZWJ) && (rhs == unicode_grapheme_cluster_break::Extended_Pictographic);
     if ((break_state == break_state::unknown) && GB11) {
         break_state = break_state::dont_break;
     }
 
-    if (rhs == Extended_Pictographic) {
+    if (rhs == unicode_grapheme_cluster_break::Extended_Pictographic) {
         state.in_extended_pictograph = true;
-    } else if (!((rhs == Extend) || (rhs == ZWJ))) {
+    } else if (!((rhs == unicode_grapheme_cluster_break::Extend) || (rhs == unicode_grapheme_cluster_break::ZWJ))) {
         state.in_extended_pictograph = false;
     }
 
-    ttlet GB12_13 = (lhs == Regional_Indicator) && (rhs == Regional_Indicator) &&
+    ttlet GB12_13 = (lhs == unicode_grapheme_cluster_break::Regional_Indicator) && (rhs == unicode_grapheme_cluster_break::Regional_Indicator) &&
         ((state.RI_count % 2) == 1);
     if ((break_state == break_state::unknown) && (GB12_13)) {
         break_state = break_state::dont_break;
     }
 
-    if (rhs == Regional_Indicator) {
+    if (rhs == unicode_grapheme_cluster_break::Regional_Indicator) {
         state.RI_count++;
     } else {
         state.RI_count = 0;
