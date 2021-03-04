@@ -136,10 +136,10 @@ ssize_t file::seek(ssize_t offset, seek_whence whence)
 
     DWORD whence_;
     switch (whence) {
-        using enum seek_whence;
-    case begin: whence_ = FILE_BEGIN; break;
-    case current: whence_ = FILE_CURRENT; break;
-    case end: whence_ = FILE_END; break;
+    // TODO: Use using enum when added to GCC
+    case seek_whence::begin: whence_ = FILE_BEGIN; break;
+    case seek_whence::current: whence_ = FILE_CURRENT; break;
+    case seek_whence::end: whence_ = FILE_END; break;
     default: tt_no_default();
     }
 
