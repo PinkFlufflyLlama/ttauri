@@ -83,7 +83,7 @@ struct mouse_event {
     friend std::string to_string(mouse_event const &rhs) noexcept {
         char const *type_s;
         switch (rhs.type) {
-        // TODO: change back to using namespace when its added to GCC
+        // TODO: change back to using enum when its added to GCC
         case mouse_event::Type::None: type_s = "none"; break;
         case mouse_event::Type::Entered: type_s = "entered"; break;
         case mouse_event::Type::Exited: type_s = "exited"; break;
