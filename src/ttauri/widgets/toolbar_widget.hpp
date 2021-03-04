@@ -34,9 +34,9 @@ public:
     {
         auto tmp = super::add_widget(std::move(widget));
         switch (alignment) {
-            using enum horizontal_alignment;
-        case left: _left_children.push_back(tmp); break;
-        case right: _right_children.push_back(tmp); break;
+        // TODO: Use using enum when added to GCC
+        case horizontal_alignment::left: _left_children.push_back(tmp); break;
+        case horizontal_alignment::right: _right_children.push_back(tmp); break;
         default: tt_no_default();
         }
 
