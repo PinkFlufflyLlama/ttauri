@@ -41,7 +41,7 @@ public:
     /** The delegate to be used for the audio system.
      * @return The delegate to be used for the audio system, or nullptr if the audio system should not be initialized.
      */
-    virtual std::weak_ptr<audio_system_delegate> audio_system_delegate(application &self) noexcept
+    virtual std::weak_ptr<tt::audio_system_delegate> audio_system_delegate(application &self) noexcept
     {
         return {};
     }
@@ -49,7 +49,7 @@ public:
     /** The delegate to be used for the gui system.
      * @return The delegate to be used for the gui system, or nullptr if the gui system should not be initialized.
      */
-    virtual std::weak_ptr<gui_system_delegate> gui_system_delegate(application &self) noexcept
+    virtual std::weak_ptr<tt::gui_system_delegate> gui_system_delegate(application &self) noexcept
     {
         return {};
     }

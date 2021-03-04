@@ -30,7 +30,7 @@ struct hit_box {
         ApplicationIcon
     };
 
-    std::weak_ptr<widget const> widget;
+    std::weak_ptr<tt::widget const> widget;
     float elevation;
     Type type;
 
