@@ -259,8 +259,8 @@ public:
         }
     }
 
-    template<typename F, typename... Args>
-    std::shared_ptr<F> make_widget(Args &&...args)
+    template<typename... Args>
+    std::shared_ptr<T> make_widget(Args &&...args)
     {
         tt_no_default();
     }
