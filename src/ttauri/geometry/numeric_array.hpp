@@ -4,13 +4,12 @@
 
 #pragma once
 
-#include "os_detect.hpp"
-#include "aligned_array.hpp"
-#include "concepts.hpp"
-#include "cast.hpp"
-#include "type_traits.hpp"
+#include "../os_detect.hpp"
+#include "../concepts.hpp"
+#include "../cast.hpp"
+#include "../type_traits.hpp"
 #if TT_PROCESSOR == TT_CPU_X64
-#include "detail/f32x4_sse.hpp"
+#include "f32x4_sse.hpp"
 #endif
 
 #include <cstdint>
@@ -29,7 +28,7 @@ class numeric_array {
 public:
     static_assert(N >= 0);
 
-    using container_type = aligned_array<T, N>;
+    using container_type = std::array<T, N>;
     using value_type = typename container_type::value_type;
     using size_type = typename container_type::size_type;
     using difference_type = typename container_type::difference_type;
@@ -75,8 +74,6 @@ public:
     {
     }
 
-    [[nodiscard]] explicit constexpr numeric_array(aligned_array<T, N> const &rhs) noexcept : v(rhs) {}
-
     [[nodiscard]] static constexpr numeric_array broadcast(T rhs) noexcept
     {
         auto r = numeric_array{};
@@ -86,69 +83,17 @@ public:
         return r;
     }
 
-    /** Get a point at the origin.
-     */
-    [[nodiscard]] static constexpr numeric_array point() noexcept
+    [[nodiscard]] numeric_array(std::array<T,N> const &rhs) noexcept : v(rhs) {}
+
+    numeric_array &operator=(std::array<T,N> const &rhs) noexcept
     {
-        auto r = numeric_array{};
-        r.back() = T{1};
-        return r;
+        v = rhs;
+        return *this;
     }
 
-    /** Convert vector to point.
-     */
-    [[nodiscard]] static constexpr numeric_array point(numeric_array rhs) noexcept
+    [[nodiscard]] operator std::array<T,N>() const noexcept
     {
-        rhs.back() = T{1};
-        return rhs;
-    }
-
-    [[nodiscard]] static constexpr numeric_array point(std::initializer_list<T> rhs) noexcept
-    {
-        auto r = numeric_array(rhs);
-
-        if (std::size(rhs) < N) {
-            r.v.back() = T{1};
-        }
-
-        tt_axiom(r.v.back() != T{}, "Last element of a point should be non-zero");
-        return r;
-    }
-
-    template<arithmetic... Rest>
-    [[nodiscard]] static constexpr numeric_array point(T const &first, Rest const &...rest) noexcept requires(sizeof...(Rest) < N)
-    {
-        return point({first, narrow_cast<T>(rest)...});
-    }
-
-    [[nodiscard]] static constexpr numeric_array color(std::initializer_list<T> rhs) noexcept
-    {
-        return point(rhs);
-    }
-
-    template<arithmetic... Rest>
-    [[nodiscard]] static constexpr numeric_array color(T const &first, Rest const &...rest) noexcept requires(sizeof...(Rest) < N)
-    {
-        return color({first, narrow_cast<T>(rest)...});
-    }
-
-    template<arithmetic U, ssize_t M>
-    [[nodiscard]] explicit constexpr numeric_array(std::array<U, M> const &rhs) noexcept : v()
-    {
-        auto src = std::begin(rhs);
-        auto dst = std::begin(v);
-        auto src_last = std::end(rhs);
-        auto dst_last = std::end(v);
-
-        while (src != src_last && dst != dst_last) {
-            *(dst++) = narrow_cast<T>(*(src++));
-        }
-        while (dst != dst_last) {
-            *(dst++) = T{};
-        }
-        while (src != src_last) {
-            tt_axiom(*(src++) == U{});
-        }
+        return v;
     }
 
     template<arithmetic U, ssize_t M>
@@ -168,64 +113,6 @@ public:
         while (src != src_last) {
             tt_axiom(*(src++) == U{});
         }
-    }
-
-    [[nodiscard]] explicit numeric_array(__m128 const &rhs) noexcept requires(N == 4 && std::is_same_v<T, float> && has_sse) :
-        v(rhs)
-    {
-    }
-
-    [[nodiscard]] explicit numeric_array(__m128d const &rhs) noexcept requires(N == 2 && std::is_same_v<T, double> && has_sse) :
-        v(rhs)
-    {
-    }
-
-    [[nodiscard]] explicit numeric_array(__m128i const &rhs) noexcept
-        requires(std::is_integral_v<T> &&std::is_signed_v<T> && sizeof(T) * N == 16 && has_sse) :
-        v(rhs)
-    {
-    }
-
-    [[nodiscard]] explicit numeric_array(__m256 const &rhs) noexcept requires(N == 8 && std::is_same_v<T, float> && has_sse) :
-        v(rhs)
-    {
-    }
-
-    [[nodiscard]] explicit numeric_array(__m256d const &rhs) noexcept requires(N == 4 && std::is_same_v<T, double> && has_sse) :
-        v(rhs)
-    {
-    }
-
-    [[nodiscard]] explicit numeric_array(__m256i const &rhs) noexcept
-        requires(std::is_integral_v<T> &&std::is_signed_v<T> && sizeof(T) * N == 32 && has_sse) :
-        v(rhs)
-    {
-    }
-
-    template<arithmetic U, ssize_t M>
-    [[nodiscard]] explicit constexpr operator std::array<U, M>() const noexcept
-    {
-        auto r = std::array<U, M>{};
-
-        auto src = std::begin(v);
-        auto dst = std::begin(r);
-        auto src_last = std::end(v);
-        auto dst_last = std::end(r);
-
-        while (src != src_last && dst != dst_last) {
-            *(dst++) = narrow_cast<U>(*(src++));
-        }
-        while (dst != dst_last) {
-            *(dst++) = U{};
-        }
-
-        // Check if the rest of the data are zeros, or one in homogeneous coordinates.
-        while (src != src_last) {
-            tt_axiom(*src == T{} || *src == T{1});
-            ++src;
-        }
-
-        return r;
     }
 
     template<arithmetic U, ssize_t M>
@@ -249,38 +136,6 @@ public:
         }
 
         return r;
-    }
-
-    [[nodiscard]] explicit operator __m128() const noexcept requires(N == 4 && std::is_same_v<T, float> && has_sse)
-    {
-        return static_cast<__m128>(v);
-    }
-
-    [[nodiscard]] explicit operator __m128d() const noexcept requires(N == 2 && std::is_same_v<T, double> && has_sse)
-    {
-        return static_cast<__m128d>(v);
-    }
-
-    [[nodiscard]] explicit operator __m128i() const noexcept
-        requires(std::is_integral_v<T> &&std::is_signed_v<T> && sizeof(T) * N == 16 && has_sse)
-    {
-        return static_cast<__m128i>(v);
-    }
-
-    [[nodiscard]] explicit operator __m256() const noexcept requires(N == 8 && std::is_same_v<T, float> && has_sse)
-    {
-        return static_cast<__m256>(v);
-    }
-
-    [[nodiscard]] explicit operator __m256d() const noexcept requires(N == 4 && std::is_same_v<T, double> && has_sse)
-    {
-        return static_cast<__m256d>(v);
-    }
-
-    [[nodiscard]] explicit operator __m256i() const noexcept
-        requires(std::is_integral_v<T> &&std::is_signed_v<T> && sizeof(T) * N == 32 && has_sse)
-    {
-        return static_cast<__m256i>(v);
     }
 
     [[nodiscard]] constexpr T const &operator[](ssize_t i) const noexcept
@@ -392,112 +247,112 @@ public:
 
     [[nodiscard]] constexpr T const &x() const noexcept requires(N >= 1)
     {
-        return get<0>(v);
+        return std::get<0>(v);
     }
 
     [[nodiscard]] constexpr T const &y() const noexcept requires(N >= 2)
     {
-        return get<1>(v);
+        return std::get<1>(v);
     }
 
     [[nodiscard]] constexpr T const &z() const noexcept requires(N >= 3)
     {
-        return get<2>(v);
+        return std::get<2>(v);
     }
 
     [[nodiscard]] constexpr T const &w() const noexcept requires(N >= 4)
     {
-        return get<3>(v);
+        return std::get<3>(v);
     }
 
     [[nodiscard]] constexpr T &x() noexcept requires(N >= 1)
     {
-        return get<0>(v);
+        return std::get<0>(v);
     }
 
     [[nodiscard]] constexpr T &y() noexcept requires(N >= 2)
     {
-        return get<1>(v);
+        return std::get<1>(v);
     }
 
     [[nodiscard]] constexpr T &z() noexcept requires(N >= 3)
     {
-        return get<2>(v);
+        return std::get<2>(v);
     }
 
     [[nodiscard]] constexpr T &w() noexcept requires(N >= 4)
     {
-        return get<3>(v);
+        return std::get<3>(v);
     }
 
     [[nodiscard]] constexpr T const &r() const noexcept requires(N >= 1)
     {
-        return get<0>(v);
+        return std::get<0>(v);
     }
 
     [[nodiscard]] constexpr T const &g() const noexcept requires(N >= 2)
     {
-        return get<1>(v);
+        return std::get<1>(v);
     }
 
     [[nodiscard]] constexpr T const &b() const noexcept requires(N >= 3)
     {
-        return get<2>(v);
+        return std::get<2>(v);
     }
 
     [[nodiscard]] constexpr T const &a() const noexcept requires(N >= 4)
     {
-        return get<3>(v);
+        return std::get<3>(v);
     }
 
     [[nodiscard]] constexpr T &r() noexcept requires(N >= 1)
     {
-        return get<0>(v);
+        return std::get<0>(v);
     }
 
     [[nodiscard]] constexpr T &g() noexcept requires(N >= 2)
     {
-        return get<1>(v);
+        return std::get<1>(v);
     }
 
     [[nodiscard]] constexpr T &b() noexcept requires(N >= 3)
     {
-        return get<2>(v);
+        return std::get<2>(v);
     }
 
     [[nodiscard]] constexpr T &a() noexcept requires(N >= 4)
     {
-        return get<3>(v);
+        return std::get<3>(v);
     }
 
     [[nodiscard]] constexpr T const &width() const noexcept requires(N >= 1)
     {
-        return get<0>(v);
+        return std::get<0>(v);
     }
 
     [[nodiscard]] constexpr T const &height() const noexcept requires(N >= 2)
     {
-        return get<1>(v);
+        return std::get<1>(v);
     }
 
     [[nodiscard]] constexpr T const &depth() const noexcept requires(N >= 3)
     {
-        return get<2>(v);
+        return std::get<2>(v);
     }
 
     [[nodiscard]] constexpr T &width() noexcept requires(N >= 1)
     {
-        return get<0>(v);
+        return std::get<0>(v);
     }
 
     [[nodiscard]] constexpr T &height() noexcept requires(N >= 2)
     {
-        return get<1>(v);
+        return std::get<1>(v);
     }
 
     [[nodiscard]] constexpr T &depth() noexcept requires(N >= 3)
     {
-        return get<2>(v);
+        return std::get<2>(v);
     }
 
     constexpr numeric_array &operator+=(numeric_array const &rhs) noexcept
@@ -591,7 +446,7 @@ public:
     [[nodiscard]] friend constexpr T &get(numeric_array &rhs) noexcept
     {
         static_assert(I >= 0 && I < N, "Index out of bounds");
-        return get<I>(rhs.v);
+        return std::get<I>(rhs.v);
     }
 
     /** Get a element from the numeric array.
@@ -608,7 +463,7 @@ public:
         } else if constexpr (I == get_one) {
             return T{1};
         } else {
-            return get<I>(rhs.v);
+            return std::get<I>(rhs.v);
         }
     }
 
@@ -626,7 +481,7 @@ public:
         } else if constexpr (I == get_one) {
             return T{1};
         } else {
-            return get<I>(rhs.v);
+            return std::get<I>(rhs.v);
         }
     }
 
@@ -1330,17 +1185,6 @@ public:
         }
 
         return r;
-    }
-
-    [[nodiscard]] friend numeric_array desaturate(numeric_array const &color, T brightness) noexcept
-        requires(N == 4 && std::is_floating_point_v<T>)
-    {
-        // Use luminance ratios and change the brightness.
-        // luminance ratios according to BT.709.
-        ttlet RGB0 = color * numeric_array::color({T{0.2126}, T{0.7152}, T{0.0722}, T{0.0}}) * brightness;
-        ttlet tmp = hadd(RGB0, RGB0);
-        ttlet luminance = hadd(tmp, tmp);
-        return luminance.xxx0() + color._000w();
     }
 
     [[nodiscard]] friend numeric_array composit(numeric_array const &under, numeric_array const &over) noexcept
